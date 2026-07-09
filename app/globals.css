@@ -1,0 +1,246 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --radius: 1rem;
+  --background: oklch(0.97 0.005 120);
+  --foreground: oklch(0.15 0.01 120);
+  --card: oklch(1 0 0 / 0.62);
+  --card-foreground: oklch(0.15 0.01 120);
+  --popover: oklch(1 0 0 / 0.85);
+  --popover-foreground: oklch(0.15 0.01 120);
+  --primary: oklch(0.55 0.22 27);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(1 0 0 / 0.55);
+  --secondary-foreground: oklch(0.2 0.01 120);
+  --muted: oklch(0.55 0.01 120 / 0.1);
+  --muted-foreground: oklch(0.5 0.01 120);
+  --accent: oklch(0.95 0.03 27);
+  --accent-foreground: oklch(0.4 0.15 27);
+  --destructive: oklch(0.5 0.21 20);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.3 0.01 120 / 0.14);
+  --input: oklch(0.3 0.01 120 / 0.16);
+  --ring: oklch(0.55 0.22 27);
+  --chart-1: oklch(0.55 0.22 27);
+  --chart-2: oklch(0.6 0.15 200);
+  --chart-3: oklch(0.7 0.17 60);
+  --chart-4: oklch(0.62 0.2 300);
+  --chart-5: oklch(0.55 0.12 150);
+  /* Manchas de color del fondo ambiental (detrás del cristal) */
+  --glow-1: oklch(0.6 0.2 27 / 0.16);
+  --glow-2: oklch(0.7 0.16 45 / 0.16);
+  --glow-3: oklch(0.5 0.19 10 / 0.14);
+}
+
+.dark {
+  --background: oklch(0.17 0.008 130);
+  --foreground: oklch(0.96 0.005 120);
+  --card: oklch(0.28 0.012 140 / 0.42);
+  --card-foreground: oklch(0.96 0.005 120);
+  --popover: oklch(0.24 0.01 140 / 0.88);
+  --popover-foreground: oklch(0.96 0.005 120);
+  --primary: oklch(0.63 0.25 28);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.35 0.012 140 / 0.45);
+  --secondary-foreground: oklch(0.96 0.005 120);
+  --muted: oklch(0.6 0.02 140 / 0.14);
+  --muted-foreground: oklch(0.7 0.01 120);
+  --accent: oklch(0.45 0.12 27 / 0.4);
+  --accent-foreground: oklch(0.85 0.12 27);
+  --destructive: oklch(0.55 0.2 15);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.95 0.01 130 / 0.13);
+  --input: oklch(0.95 0.01 130 / 0.15);
+  --ring: oklch(0.63 0.25 28);
+  --chart-1: oklch(0.63 0.25 28);
+  --chart-2: oklch(0.72 0.13 200);
+  --chart-3: oklch(0.8 0.15 65);
+  --chart-4: oklch(0.72 0.16 300);
+  --chart-5: oklch(0.7 0.13 150);
+  --glow-1: oklch(0.5 0.2 27 / 0.3);
+  --glow-2: oklch(0.55 0.16 45 / 0.22);
+  --glow-3: oklch(0.4 0.17 10 / 0.28);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@layer utilities {
+  /* Texto con degradado de marca */
+  .text-gradient-brand {
+    @apply bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent;
+  }
+  /* Resplandor neón para elementos destacados */
+  .glow-primary {
+    box-shadow: 0 0 24px -4px var(--primary);
+  }
+  .glow-primary-soft {
+    box-shadow: 0 0 60px -18px var(--primary);
+  }
+}
+
+/* =====================================================================
+   SKIN «LIQUID GLASS»
+   Reglas sin @layer: ganan a las utilidades de Tailwind y re-estilizan
+   los componentes shadcn a través de sus atributos data-slot.
+   ===================================================================== */
+
+/* Fondo ambiental: manchas de color difuminadas detrás del cristal */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  background:
+    radial-gradient(560px 420px at 12% 8%, var(--glow-1), transparent 70%),
+    radial-gradient(680px 480px at 88% 18%, var(--glow-2), transparent 70%),
+    radial-gradient(820px 620px at 50% 105%, var(--glow-3), transparent 70%);
+}
+
+/* Superficies de cristal */
+[data-slot="card"] {
+  border-radius: calc(var(--radius) + 8px);
+  backdrop-filter: blur(22px) saturate(1.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  background-image: linear-gradient(
+    135deg,
+    oklch(1 0 0 / 0.1),
+    oklch(1 0 0 / 0.02) 45%,
+    transparent
+  );
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.18),
+    inset 0 0 0 1px oklch(1 0 0 / 0.04),
+    0 18px 40px -18px oklch(0 0 0 / 0.4);
+}
+
+[data-slot="dialog-content"],
+[data-slot="sheet-content"] {
+  border-radius: calc(var(--radius) + 8px);
+  background-color: var(--popover);
+  backdrop-filter: blur(28px) saturate(1.5);
+  -webkit-backdrop-filter: blur(28px) saturate(1.5);
+  background-image: linear-gradient(
+    135deg,
+    oklch(1 0 0 / 0.1),
+    transparent 50%
+  );
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.18),
+    0 24px 60px -20px oklch(0 0 0 / 0.5);
+}
+
+[data-slot="sheet-content"] {
+  border-radius: calc(var(--radius) + 8px) 0 0 calc(var(--radius) + 8px);
+}
+
+[data-slot="dialog-overlay"],
+[data-slot="sheet-overlay"] {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+[data-slot="dropdown-menu-content"],
+[data-slot="select-content"] {
+  border-radius: calc(var(--radius) + 2px);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.15),
+    0 16px 40px -16px oklch(0 0 0 / 0.45);
+}
+
+/* Botones píldora; brillo superior solo en los que tienen fondo */
+[data-slot="button"] {
+  border-radius: 9999px;
+}
+
+[data-slot="button"]:where(.bg-primary, .bg-secondary, .bg-destructive) {
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.25);
+}
+
+/* Campos de formulario tipo cápsula translúcida */
+[data-slot="input"],
+[data-slot="select-trigger"] {
+  border-radius: 9999px;
+  padding-inline: 1rem;
+  background-color: color-mix(in oklab, var(--card) 70%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 2px oklch(0 0 0 / 0.06);
+}
+
+[data-slot="textarea"] {
+  border-radius: calc(var(--radius) + 2px);
+  background-color: color-mix(in oklab, var(--card) 70%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Pestañas en cápsula */
+[data-slot="tabs-list"] {
+  border-radius: 9999px;
+  padding: 4px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-slot="tabs-trigger"] {
+  border-radius: 9999px;
+}
+
+/* Detalles redondeados coherentes */
+[data-slot="badge"] {
+  border-radius: 9999px;
+}
+
+[data-slot="checkbox"] {
+  border-radius: 0.4rem;
+}
+
+[data-slot="progress"] {
+  box-shadow: inset 0 1px 2px oklch(0 0 0 / 0.15);
+}

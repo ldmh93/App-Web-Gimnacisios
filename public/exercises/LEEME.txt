@@ -1,0 +1,44 @@
+CÓMO AÑADIR IMÁGENES DE EJERCICIOS
+===================================
+
+Coloca en esta carpeta una imagen por ejercicio, nombrada con el id del
+ejercicio (data/exercises.ts). Formatos aceptados: .jpg, .png o .webp.
+La app la detecta automáticamente; si no existe, muestra el placeholder.
+
+Recomendado: horizontales (16:9 o 4:3), ~1200 px de ancho.
+
+Nombres exactos:
+
+press-banca.jpg                  Press banca con barra
+press-inclinado-mancuernas.jpg   Press inclinado con mancuernas
+aperturas-polea.jpg              Aperturas en polea (cruce de poleas)
+fondos-paralelas.jpg             Fondos en paralelas
+dominadas.jpg                    Dominadas
+remo-barra.jpg                   Remo con barra
+jalon-pecho.jpg                  Jalón al pecho
+peso-muerto.jpg                  Peso muerto convencional
+sentadilla-barra.jpg             Sentadilla con barra
+prensa.jpg                       Prensa de piernas
+zancadas.jpg                     Zancadas con mancuernas
+curl-femoral.jpg                 Curl femoral tumbado
+hip-thrust.jpg                   Hip thrust con barra
+peso-muerto-rumano.jpg           Peso muerto rumano
+abduccion-cadera.jpg             Abducción de cadera en máquina
+press-militar.jpg                Press militar con barra
+elevaciones-laterales.jpg        Elevaciones laterales
+pajaros.jpg                      Pájaros (elevaciones posteriores)
+curl-barra.jpg                   Curl con barra
+curl-inclinado.jpg               Curl inclinado con mancuernas
+curl-martillo.jpg                Curl martillo
+press-frances.jpg                Press francés
+extension-polea.jpg              Extensión de tríceps en polea
+fondos-banco.jpg                 Fondos entre bancos
+plancha.jpg                      Plancha abdominal
+crunch-polea.jpg                 Crunch en polea alta
+elevaciones-piernas.jpg          Elevaciones de piernas colgado
+caminata-inclinada.jpg           Caminata en cinta inclinada
+hiit-bici.jpg                    HIIT en bicicleta estática
+remo-maquina.jpg                 Remo en máquina (ergómetro)
+gato-camello.jpg                 Gato-camello
+sentadilla-profunda.jpg          Sentadilla profunda sostenida
+apertura-toracica.jpg            Apertura torácica en el suelo
