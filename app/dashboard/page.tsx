@@ -231,7 +231,7 @@ export default function DashboardPage() {
                   <CardDescription>
                     {customToday
                       ? "Entrenamiento de hoy · armado por ti en la biblioteca"
-                      : "Entrenamiento de hoy · sugerencia MAYCOL GYM"}
+                      : "Entrenamiento de hoy · sugerencia FITCORE"}
                   </CardDescription>
                   <CardTitle className="mt-1 text-xl uppercase tracking-wide">
                     {workout.name.replace("—", "·")}

@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "MAYCOL GYM — Tu entrenador personal digital",
-    template: "%s | MAYCOL GYM",
+    default: "FITCORE — Tu entrenador personal digital",
+    template: "%s | FITCORE",
   },
   description:
     "Entrena, aliméntate y controla tu progreso desde una sola plataforma. Rutinas inteligentes, planes nutricionales y seguimiento corporal.",

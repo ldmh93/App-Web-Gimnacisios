@@ -1,11 +1,12 @@
 import Link from "next/link";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 /**
- * Marca MAYCOL GYM.
- * Isotipo: emblema oficial (gorila + disco de 45 lbs) servido desde
- * public/brand/mark.png. Para reemplazarlo basta con sustituir ese archivo.
+ * Marca FITCORE.
+ * Isotipo: hexágono (disciplina/estructura) con tres barras ascendentes
+ * (crecimiento/transformación). Hereda el color primario del tema.
+ * Reemplazable: basta con sustituir el SVG de <LogoMark /> manteniendo
+ * las mismas props.
  */
 
 interface LogoMarkProps {
@@ -14,22 +15,23 @@ interface LogoMarkProps {
 
 export function LogoMark({ className }: LogoMarkProps) {
   return (
-    <span
-      className={cn(
-        "relative inline-block size-9 shrink-0 overflow-hidden rounded-full ring-1 ring-primary/50",
-        className
-      )}
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("h-8 w-8", className)}
       aria-hidden="true"
     >
-      <Image
-        src="/brand/mark.png"
-        alt=""
-        fill
-        sizes="128px"
-        className="object-cover"
-        priority
+      <path
+        d="M24 3.5 41.5 13.75v20.5L24 44.5 6.5 34.25v-20.5L24 3.5Z"
+        className="stroke-primary"
+        strokeWidth="3"
+        strokeLinejoin="round"
       />
-    </span>
+      <rect x="15" y="26" width="5" height="9" rx="1.5" className="fill-primary/50" />
+      <rect x="21.5" y="20" width="5" height="15" rx="1.5" className="fill-primary/75" />
+      <rect x="28" y="13" width="5" height="22" rx="1.5" className="fill-primary" />
+    </svg>
   );
 }
 
@@ -54,11 +56,11 @@ export function Logo({
       {showText && (
         <span
           className={cn(
-            "text-lg font-extrabold uppercase tracking-widest",
+            "text-xl font-extrabold uppercase tracking-widest",
             textClassName
           )}
         >
-          MAYCOL <span className="text-primary">GYM</span>
+          FIT<span className="text-primary">CORE</span>
         </span>
       )}
     </span>
@@ -67,7 +69,7 @@ export function Logo({
   if (!href) return content;
 
   return (
-    <Link href={href} aria-label="MAYCOL GYM — inicio" className="shrink-0">
+    <Link href={href} aria-label="FITCORE — inicio" className="shrink-0">
       {content}
     </Link>
   );
