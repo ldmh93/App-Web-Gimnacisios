@@ -50,3 +50,16 @@ sentadilla-cosaca.jpg            Sentadilla cosaca
 jumping-jacks.jpg                Jumping jacks (saltos de tijera)
 plancha-arana.jpg                Plancha araña (spider plank)
 circulos-brazos.jpg              Círculos de brazos
+curl-polea.jpg                   Curl de bíceps en polea
+curl-predicador.jpg              Curl de bíceps en banco Scott (predicador)
+deltoides-posterior-maquina.jpg  Deltoides posterior en máquina (peck-deck inverso)
+contractora-pecho.jpg            Aperturas en contractora de pecho (peck-deck)
+remo-polea-baja.jpg              Remo en polea baja (remo sentado)
+hiperextensiones.jpg             Hiperextensiones (banco romano)
+encogimientos-maquina.jpg        Encogimientos de hombros en máquina
+sentadilla-hack.jpg              Sentadilla hack (hack squat)
+extension-rodillas.jpg           Extensión de rodillas en máquina (leg extension)
+aductores-maquina.jpg            Aductores en máquina
+elevacion-talones-maquina.jpg    Elevación de talones de pie en máquina
+extension-cadera-maquina.jpg     Extensión de cadera en máquina
+crunch-maquina.jpg               Crunch abdominal en máquina
