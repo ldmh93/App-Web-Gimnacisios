@@ -42,3 +42,11 @@ remo-maquina.jpg                 Remo en máquina (ergómetro)
 gato-camello.jpg                 Gato-camello
 sentadilla-profunda.jpg          Sentadilla profunda sostenida
 apertura-toracica.jpg            Apertura torácica en el suelo
+flexiones.jpg                    Flexiones de brazos
+remo-invertido.jpg               Remo invertido
+sentadilla-sumo.jpg              Sentadilla sumo (peso corporal)
+zancada-inversa.jpg              Zancada inversa
+sentadilla-cosaca.jpg            Sentadilla cosaca
+jumping-jacks.jpg                Jumping jacks (saltos de tijera)
+plancha-arana.jpg                Plancha araña (spider plank)
+circulos-brazos.jpg              Círculos de brazos
