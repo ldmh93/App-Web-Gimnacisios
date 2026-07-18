@@ -21,10 +21,14 @@ import {
 import type { Exercise, MuscleGroup } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
+/** Cuántas tarjetas se muestran por tanda (carga progresiva). */
+const PAGE_SIZE = 48;
+
 export default function EjerciciosPage() {
   const router = useRouter();
   const [group, setGroup] = useState<MuscleGroup | "todos">("todos");
   const [query, setQuery] = useState("");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [todayRoutine, setTodayRoutine] = useLocalStorage<TodayRoutine>(
     STORAGE_KEYS.todayRoutine,
     EMPTY_TODAY_ROUTINE
@@ -70,10 +74,23 @@ export default function EjerciciosPage() {
       const matchesQuery =
         q === "" ||
         exercise.name.toLowerCase().includes(q) ||
+        exercise.equipment.toLowerCase().includes(q) ||
         exercise.muscles.some((m) => m.toLowerCase().includes(q));
       return matchesGroup && matchesQuery;
     });
   }, [group, query]);
+
+  const visible = filtered.slice(0, visibleCount);
+
+  const changeGroup = (g: MuscleGroup | "todos") => {
+    setGroup(g);
+    setVisibleCount(PAGE_SIZE);
+  };
+
+  const changeQuery = (q: string) => {
+    setQuery(q);
+    setVisibleCount(PAGE_SIZE);
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
@@ -88,8 +105,8 @@ export default function EjerciciosPage() {
         <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Buscar ejercicio o músculo..."
+          onChange={(e) => changeQuery(e.target.value)}
+          placeholder="Buscar ejercicio, músculo o equipo..."
           className="pl-9"
           aria-label="Buscar ejercicio"
         />
@@ -108,7 +125,7 @@ export default function EjerciciosPage() {
               type="button"
               role="tab"
               aria-selected={group === item.id}
-              onClick={() => setGroup(item.id)}
+              onClick={() => changeGroup(item.id)}
               className={cn(
                 "shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors",
                 group === item.id
@@ -137,16 +154,32 @@ export default function EjerciciosPage() {
               {filtered.length} ejercicio{filtered.length !== 1 && "s"}
             </Badge>
           </div>
-          <div className="grid gap-4 pb-24 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filtered.map((exercise, index) => (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {visible.map((exercise, index) => (
               <ExerciseCard
                 key={exercise.id}
                 exercise={exercise}
-                index={index}
+                index={index % PAGE_SIZE}
                 inTodayRoutine={isInToday(exercise.id)}
                 onToggleToday={toggleToday}
               />
             ))}
+          </div>
+          <div className="flex flex-col items-center gap-3 pb-24 pt-8">
+            {visibleCount < filtered.length && (
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                className="font-semibold"
+              >
+                Mostrar más ({filtered.length - visibleCount} restantes)
+              </Button>
+            )}
+            <p className="text-center text-[11px] text-muted-foreground/70">
+              Ilustraciones y animaciones de la biblioteca importada: © Gym
+              Visual — gymvisual.com
+            </p>
           </div>
         </>
       )}

@@ -30,23 +30,50 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * Imagen del ejercicio por convención de nombre: public/exercises/<id>.<ext>.
- * Prueba jpg → png → webp; si ninguna existe, no renderiza nada y queda
- * visible el placeholder que está debajo.
+ * Imagen del ejercicio. Si el ejercicio trae `image` (dataset importado) se usa
+ * directamente; si no, se prueba por convención public/exercises/<id>.<ext>
+ * (jpg → png → webp). Si nada existe, queda visible el placeholder de debajo.
  */
 const IMAGE_EXTENSIONS = ["jpg", "png", "webp"] as const;
 
-function ExerciseImage({ exerciseId, alt }: { exerciseId: string; alt: string }) {
+function ExerciseImage({
+  exercise,
+  contain = false,
+}: {
+  exercise: Exercise;
+  contain?: boolean;
+}) {
   const [extIndex, setExtIndex] = useState(0);
-  if (extIndex >= IMAGE_EXTENSIONS.length) return null;
+  const candidates = exercise.image
+    ? [exercise.image]
+    : IMAGE_EXTENSIONS.map((ext) => `/exercises/${exercise.id}.${ext}`);
+  if (extIndex >= candidates.length) return null;
   return (
     <Image
-      src={`/exercises/${exerciseId}.${IMAGE_EXTENSIONS[extIndex]}`}
-      alt={alt}
+      src={candidates[extIndex]}
+      alt={exercise.name}
       fill
-      className="object-cover"
+      unoptimized={Boolean(exercise.image)}
+      className={contain ? "object-contain" : "object-cover"}
       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
       onError={() => setExtIndex((i) => i + 1)}
+    />
+  );
+}
+
+/** GIF animado del movimiento (dataset importado, 180×180). */
+function ExerciseGif({ exercise }: { exercise: Exercise }) {
+  const [failed, setFailed] = useState(false);
+  if (!exercise.gif || failed) return <ExerciseImage exercise={exercise} contain />;
+  return (
+    <Image
+      src={exercise.gif}
+      alt={`Animación: ${exercise.name}`}
+      fill
+      unoptimized
+      className="object-contain"
+      sizes="(max-width: 640px) 100vw, 576px"
+      onError={() => setFailed(true)}
     />
   );
 }
@@ -116,7 +143,7 @@ export function ExerciseCard({
             {/* Imagen (si existe en public/exercises/) sobre el placeholder */}
             <div className="relative flex h-36 items-center justify-center bg-gradient-to-br from-muted via-muted to-primary/15">
               <Dumbbell className="size-10 text-muted-foreground/40 transition-transform group-hover:scale-110 group-hover:text-primary/60" />
-              <ExerciseImage exerciseId={exercise.id} alt={exercise.name} />
+              <ExerciseImage exercise={exercise} contain={Boolean(exercise.image)} />
               <Badge
                 className={cn(
                   "absolute left-3 top-3 z-10 capitalize",
@@ -177,9 +204,16 @@ export function ExerciseCard({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-muted via-muted to-primary/15">
-          <Dumbbell className="size-12 text-muted-foreground/40" />
-          <ExerciseImage exerciseId={exercise.id} alt={exercise.name} />
+        <div>
+          <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-muted via-muted to-primary/15">
+            <Dumbbell className="size-12 text-muted-foreground/40" />
+            <ExerciseGif exercise={exercise} />
+          </div>
+          {exercise.attribution && (
+            <p className="mt-1.5 text-right text-[10px] text-muted-foreground/70">
+              {exercise.attribution}
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-3 text-center">
@@ -237,18 +271,22 @@ export function ExerciseCard({
             items={exercise.technique}
             iconClassName="text-primary"
           />
-          <DetailList
-            icon={AlertTriangle}
-            title="Errores comunes"
-            items={exercise.commonMistakes}
-            iconClassName="text-amber-500"
-          />
-          <DetailList
-            icon={Lightbulb}
-            title="Consejos"
-            items={exercise.tips}
-            iconClassName="text-sky-500"
-          />
+          {exercise.commonMistakes && exercise.commonMistakes.length > 0 && (
+            <DetailList
+              icon={AlertTriangle}
+              title="Errores comunes"
+              items={exercise.commonMistakes}
+              iconClassName="text-amber-500"
+            />
+          )}
+          {exercise.tips && exercise.tips.length > 0 && (
+            <DetailList
+              icon={Lightbulb}
+              title="Consejos"
+              items={exercise.tips}
+              iconClassName="text-sky-500"
+            />
+          )}
         </div>
       </DialogContent>
     </Dialog>

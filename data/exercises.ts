@@ -1,4 +1,5 @@
 import type { Exercise, MuscleGroup } from "@/lib/types";
+import { DB_EXERCISES } from "./exercisesDb";
 
 export const MUSCLE_GROUPS: { id: MuscleGroup; label: string }[] = [
   { id: "pecho", label: "Pecho" },
@@ -17,7 +18,8 @@ export function muscleLabel(id: MuscleGroup): string {
   return MUSCLE_GROUPS.find((m) => m.id === id)?.label ?? id;
 }
 
-export const EXERCISES: Exercise[] = [
+/** Ejercicios curados a mano de FITCORE (fichas completas con errores y consejos). */
+export const CURATED_EXERCISES: Exercise[] = [
   /* -------------------------------- Pecho -------------------------------- */
   {
     id: "press-banca",
@@ -1444,6 +1446,12 @@ export const EXERCISES: Exercise[] = [
     ],
   },
 ];
+
+/**
+ * Biblioteca completa: ejercicios curados + los importados del dataset
+ * (con imagen 180×180 y GIF animado, © Gym Visual).
+ */
+export const EXERCISES: Exercise[] = [...CURATED_EXERCISES, ...DB_EXERCISES];
 
 export function getExercise(id: string): Exercise | undefined {
   return EXERCISES.find((e) => e.id === id);

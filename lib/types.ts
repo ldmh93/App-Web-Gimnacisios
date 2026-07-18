@@ -46,8 +46,15 @@ export interface Exercise {
   reps: string;
   rest: string;
   technique: string[];
-  commonMistakes: string[];
-  tips: string[];
+  /** Opcionales: los ejercicios importados del dataset no los incluyen. */
+  commonMistakes?: string[];
+  tips?: string[];
+  /** Ruta de imagen explícita (si no, se busca /exercises/<id>.jpg|png|webp). */
+  image?: string;
+  /** GIF animado del movimiento (se muestra en la ficha). */
+  gif?: string;
+  /** Crédito obligatorio del medio (p. ej. © Gym Visual). */
+  attribution?: string;
 }
 
 /* ------------------------------- Rutinas -------------------------------- */
