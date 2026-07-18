@@ -11,6 +11,7 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import { LogoMark } from "@/components/Logo";
+import { GymCarousel } from "@/components/GymCarousel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -128,6 +129,21 @@ export default function LandingPage() {
               </Link>
             </Button>
           </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Galería del gimnasio */}
+      <section className="mx-auto max-w-5xl px-4 pb-20 sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.55, ease: "easeOut" }}
+        >
+          <h2 className="mb-6 text-center text-2xl font-bold sm:text-3xl">
+            Conoce <span className="text-gradient-brand">nuestro gimnasio</span>
+          </h2>
+          <GymCarousel />
         </motion.div>
       </section>
 

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,8 +17,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "FITCORE — Tu entrenador personal digital",
-    template: "%s | FITCORE",
+    default: "MAYCOL GYM — Tu entrenador personal digital",
+    template: "%s | MAYCOL GYM",
   },
   description:
     "Entrena, aliméntate y controla tu progreso desde una sola plataforma. Rutinas inteligentes, planes nutricionales y seguimiento corporal.",
@@ -41,6 +42,7 @@ export default function RootLayout({
         >
           <Header />
           <main className="pt-16">{children}</main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
