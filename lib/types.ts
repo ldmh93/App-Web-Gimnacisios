@@ -125,6 +125,16 @@ export interface UserProfile {
   activity: ActivityLevel;
   goal: Goal;
   targetWeight?: number;
+  /* Datos de socio (perfil simulado, sin base de datos todavía). */
+  name?: string;
+  /** Foto del socio como data URL (guardada en LocalStorage). */
+  avatar?: string;
+  level?: Level;
+  daysPerWeek?: number;
+  memberNumber?: string;
+  /** Fecha de alta en formato ISO (YYYY-MM-DD). */
+  memberSince?: string;
+  plan?: string;
 }
 
 export interface MacroTargets {

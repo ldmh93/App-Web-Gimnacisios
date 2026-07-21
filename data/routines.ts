@@ -479,3 +479,35 @@ export const PREDEFINED_ROUTINES: PredefinedRoutine[] = [
 export function getPredefinedRoutine(id: string): PredefinedRoutine | undefined {
   return PREDEFINED_ROUTINES.find((r) => r.id === id);
 }
+
+/**
+ * Recomienda una rutina predefinida según el nivel, el objetivo y los días
+ * por semana del socio. Elige la de nivel adecuado cuya frecuencia sea la más
+ * cercana a la que el usuario puede entrenar, dando prioridad al objetivo.
+ */
+export function recommendRoutine(opts: {
+  level?: import("@/lib/types").Level;
+  goal?: import("@/lib/types").Goal;
+  daysPerWeek?: number;
+}): PredefinedRoutine {
+  const level = opts.level ?? "principiante";
+  const days = opts.daysPerWeek ?? 3;
+
+  // Candidatas del nivel del usuario (o todas si no hay del nivel).
+  let pool = PREDEFINED_ROUTINES.filter((r) => r.level === level);
+  if (pool.length === 0) pool = PREDEFINED_ROUTINES;
+
+  // Preferencia por objetivo de pérdida de grasa: rutinas con cardio/definición.
+  const fatLoss = opts.goal === "perder-grasa";
+  const scored = pool
+    .map((r) => {
+      let score = Math.abs(r.daysPerWeek - days);
+      if (fatLoss && /grasa|definici|hiit|cardio/i.test(r.name + r.goal)) {
+        score -= 2;
+      }
+      return { r, score };
+    })
+    .sort((a, b) => a.score - b.score);
+
+  return scored[0].r;
+}

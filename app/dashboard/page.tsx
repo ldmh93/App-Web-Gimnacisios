@@ -40,7 +40,9 @@ import type {
 } from "@/lib/types";
 import { GOAL_ADJUSTMENTS } from "@/utils/calories";
 import { getExercise } from "@/data/exercises";
-import { getPredefinedRoutine } from "@/data/routines";
+import { getPredefinedRoutine, recommendRoutine } from "@/data/routines";
+import { UserAvatar } from "@/components/UserAvatar";
+import { BadgeCheck, UserPlus } from "lucide-react";
 
 /** Valores de ejemplo mientras el usuario no calcula su plan en Nutrición. */
 const DEFAULTS = {
@@ -57,13 +59,22 @@ interface DashboardChecks {
   done: Record<string, boolean>;
 }
 
-/** Rotación simple: lunes=Push, martes=Pull, ... usando la rutina PPL. */
-function todaysWorkout() {
-  const routine = getPredefinedRoutine("push-pull-legs");
+/**
+ * Rotación simple del día según la rutina recomendada para el socio.
+ * Si no hay perfil, cae en Push-Pull-Legs.
+ */
+function todaysWorkout(profile: UserProfile | null) {
+  const routine = profile
+    ? recommendRoutine({
+        level: profile.level,
+        goal: profile.goal,
+        daysPerWeek: profile.daysPerWeek,
+      })
+    : getPredefinedRoutine("push-pull-legs");
   if (!routine) return null;
   const weekday = new Date().getDay(); // 0=domingo
-  const index = weekday === 0 ? 2 : (weekday - 1) % routine.days.length;
-  return routine.days[index];
+  const index = weekday === 0 ? 0 : (weekday - 1) % routine.days.length;
+  return { ...routine.days[index], routineName: routine.name };
 }
 
 export default function DashboardPage() {
@@ -88,7 +99,7 @@ export default function DashboardPage() {
     EMPTY_TODAY_ROUTINE
   );
 
-  const suggested = useMemo(todaysWorkout, []);
+  const suggested = useMemo(() => todaysWorkout(profile), [profile]);
 
   // Si el usuario armó su rutina desde la biblioteca, tiene prioridad
   // sobre la sugerencia automática del día.
@@ -131,11 +142,59 @@ export default function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-      <PageHeader
-        eyebrow="Dashboard"
-        title="Tu centro de mando"
-        description="Resumen corporal, objetivos nutricionales y el entrenamiento de hoy en un vistazo."
-      />
+      {profile ? (
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <UserAvatar
+              name={profile.name}
+              avatar={profile.avatar}
+              className="size-14 text-lg"
+            />
+            <div>
+              <p className="text-sm text-muted-foreground">
+                {new Date().toLocaleDateString("es", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                })}
+              </p>
+              <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+                Hola, {profile.name?.split(/\s+/)[0]} 👋
+              </h1>
+            </div>
+          </div>
+          <Button asChild variant="outline">
+            <Link href="/carnet">
+              <BadgeCheck className="size-4" />
+              Mi carnet de socio
+            </Link>
+          </Button>
+        </div>
+      ) : (
+        <>
+          <PageHeader
+            eyebrow="Dashboard"
+            title="Tu centro de mando"
+            description="Resumen corporal, objetivos nutricionales y el entrenamiento de hoy en un vistazo."
+          />
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3"
+          >
+            <p className="text-sm text-muted-foreground">
+              Crea tu perfil de socio para personalizar tu plan, tus macros y tu
+              rutina.
+            </p>
+            <Button asChild size="sm" className="glow-primary-soft">
+              <Link href="/bienvenido">
+                <UserPlus className="size-4" />
+                Crear mi perfil
+              </Link>
+            </Button>
+          </motion.div>
+        </>
+      )}
 
       {/* Resumen corporal */}
       <section aria-label="Resumen corporal">
@@ -231,7 +290,9 @@ export default function DashboardPage() {
                   <CardDescription>
                     {customToday
                       ? "Entrenamiento de hoy · armado por ti en la biblioteca"
-                      : "Entrenamiento de hoy · sugerencia MAYCOL GYM"}
+                      : suggested && "routineName" in suggested
+                        ? `Entrenamiento de hoy · ${suggested.routineName}`
+                        : "Entrenamiento de hoy · sugerencia MAYCOL GYM"}
                   </CardDescription>
                   <CardTitle className="mt-1 text-xl uppercase tracking-wide">
                     {workout.name.replace("—", "·")}

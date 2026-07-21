@@ -4,9 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { GraduationCap, Menu, Settings, Trash2 } from "lucide-react";
+import {
+  BadgeCheck,
+  Building2,
+  GraduationCap,
+  Menu,
+  Settings,
+  Trash2,
+  UserPlus,
+} from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -23,7 +32,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { STORAGE_KEYS, removeFromStorage } from "@/lib/storage";
+import type { UserProfile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -38,6 +49,11 @@ const NAV_ITEMS = [
 export function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profile, , profileHydrated] = useLocalStorage<UserProfile | null>(
+    STORAGE_KEYS.profile,
+    null
+  );
+  const firstName = profile?.name?.split(/\s+/)[0];
 
   const resetLocalData = () => {
     if (
@@ -84,19 +100,107 @@ export function Header() {
           })}
         </nav>
 
-        {/* Derecha: tema + configuración + menú móvil */}
+        {/* Derecha: usuario + tema + configuración + menú móvil */}
         <div className="flex items-center gap-1">
+          {profileHydrated && profile && (
+            <span className="mr-1 hidden items-center gap-2 sm:flex">
+              <span className="text-sm font-medium text-muted-foreground">
+                Hola,{" "}
+                <span className="font-semibold text-foreground">
+                  {firstName}
+                </span>{" "}
+                👋
+              </span>
+            </span>
+          )}
+          {profileHydrated && !profile && (
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="mr-1 hidden sm:inline-flex"
+            >
+              <Link href="/bienvenido">
+                <UserPlus className="size-4" />
+                Crear perfil
+              </Link>
+            </Button>
+          )}
+
           <ThemeToggle />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Configuración">
-                <Settings className="size-5" />
-              </Button>
+              {profile ? (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full"
+                  aria-label="Menú de usuario"
+                >
+                  <UserAvatar
+                    name={profile.name}
+                    avatar={profile.avatar}
+                    className="size-8"
+                  />
+                </Button>
+              ) : (
+                <Button variant="ghost" size="icon" aria-label="Configuración">
+                  <Settings className="size-5" />
+                </Button>
+              )}
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Configuración</DropdownMenuLabel>
+            <DropdownMenuContent align="end" className="w-60">
+              {profile ? (
+                <>
+                  <DropdownMenuLabel className="flex items-center gap-2.5">
+                    <UserAvatar
+                      name={profile.name}
+                      avatar={profile.avatar}
+                      className="size-9"
+                    />
+                    <span className="min-w-0">
+                      <span className="block truncate font-semibold">
+                        {profile.name}
+                      </span>
+                      <span className="block truncate text-xs font-normal text-muted-foreground">
+                        Socio · {profile.memberNumber}
+                      </span>
+                    </span>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/carnet">
+                      <BadgeCheck className="size-4" />
+                      Mi carnet de socio
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/bienvenido">
+                      <Settings className="size-4" />
+                      Editar mi perfil
+                    </Link>
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuLabel>Configuración</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/bienvenido">
+                      <UserPlus className="size-4" />
+                      Crear mi perfil
+                    </Link>
+                  </DropdownMenuItem>
+                </>
+              )}
               <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/gimnasio">
+                  <Building2 className="size-4" />
+                  El gimnasio
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/educacion">
                   <GraduationCap className="size-4" />
@@ -128,9 +232,30 @@ export function Header() {
                   <Logo href={null} />
                 </SheetTitle>
               </SheetHeader>
+              {profile && (
+                <div className="mx-4 mb-2 flex items-center gap-3 rounded-xl border border-border/60 bg-muted/50 p-3">
+                  <UserAvatar
+                    name={profile.name}
+                    avatar={profile.avatar}
+                    className="size-11"
+                  />
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold">{profile.name}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      Socio · {profile.memberNumber}
+                    </p>
+                  </div>
+                </div>
+              )}
               <nav className="flex flex-col gap-1 px-4" aria-label="Menú móvil">
-                {[...NAV_ITEMS, { href: "/educacion", label: "Educación" }].map(
-                  (item) => (
+                {[
+                  ...NAV_ITEMS,
+                  ...(profile
+                    ? [{ href: "/carnet", label: "Mi carnet" }]
+                    : [{ href: "/bienvenido", label: "Crear perfil" }]),
+                  { href: "/gimnasio", label: "El gimnasio" },
+                  { href: "/educacion", label: "Educación" },
+                ].map((item) => (
                     <Link
                       key={item.href}
                       href={item.href}

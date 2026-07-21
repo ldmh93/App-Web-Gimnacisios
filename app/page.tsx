@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
+  Building2,
   ClipboardList,
   Dumbbell,
   GraduationCap,
@@ -14,6 +15,9 @@ import { LogoMark } from "@/components/Logo";
 import { GymCarousel } from "@/components/GymCarousel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { STORAGE_KEYS } from "@/lib/storage";
+import type { UserProfile } from "@/lib/types";
 
 const FEATURES = [
   {
@@ -51,6 +55,13 @@ const FEATURES = [
       "Artículos claros sobre entrenamiento, técnica, descanso y alimentación deportiva.",
     href: "/educacion",
   },
+  {
+    icon: Building2,
+    title: "El gimnasio",
+    description:
+      "Planes de membresía, horarios y contacto directo por WhatsApp con MAYCOL GYM.",
+    href: "/gimnasio",
+  },
 ];
 
 const container = {
@@ -64,6 +75,14 @@ const item = {
 };
 
 export default function LandingPage() {
+  const [profile] = useLocalStorage<UserProfile | null>(
+    STORAGE_KEYS.profile,
+    null
+  );
+  // Si aún no hay perfil, el botón principal lleva a crear la cuenta.
+  const startHref = profile ? "/dashboard" : "/bienvenido";
+  const startLabel = profile ? "Comenzar entrenamiento" : "Crear mi cuenta";
+
   return (
     <div className="relative overflow-hidden">
       {/* Fondo decorativo */}
@@ -112,8 +131,8 @@ export default function LandingPage() {
               size="lg"
               className="glow-primary-soft px-8 text-base font-semibold"
             >
-              <Link href="/dashboard">
-                Comenzar entrenamiento
+              <Link href={startHref}>
+                {startLabel}
                 <ArrowRight className="size-5" />
               </Link>
             </Button>
