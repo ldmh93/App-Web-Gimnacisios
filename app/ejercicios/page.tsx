@@ -192,7 +192,7 @@ export default function EjerciciosPage() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 90, opacity: 0 }}
             transition={{ type: "spring", stiffness: 380, damping: 32 }}
-            className="fixed inset-x-0 bottom-4 z-40 px-4"
+            className="fixed inset-x-0 bottom-24 z-40 px-4 lg:bottom-4"
           >
             <div className="glow-primary-soft mx-auto flex max-w-lg items-center gap-3 rounded-2xl border border-primary/40 bg-card/95 p-3 pl-4 shadow-xl backdrop-blur-xl">
               <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
