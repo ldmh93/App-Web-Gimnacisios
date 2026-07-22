@@ -81,8 +81,41 @@ export interface GymSchedule {
 
 export const GYM_SCHEDULE: GymSchedule[] = [
   { days: "Lunes a viernes", hours: "6:00 – 22:00" },
-  { days: "Sábado", hours: "8:00 – 18:00" },
-  { days: "Domingo", hours: "9:00 – 14:00" },
+  { days: "Sábado", hours: "7:00 – 17:00" },
+  { days: "Domingo", hours: "7:00 – 14:00" },
+];
+
+export interface StaffMember {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  /** Foto opcional en public/staff/<id>.jpg (si no existe, se muestran iniciales). */
+  photo?: string;
+}
+
+export const GYM_STAFF: StaffMember[] = [
+  {
+    id: "maycol",
+    name: "Maycol",
+    role: "Entrenador y nutriólogo",
+    bio: "Diseña tu plan de entrenamiento y te acompaña para que entrenes con buena técnica y progreses seguro.",
+  },
+  {
+    id: "adamaris",
+    name: "Adamaris",
+    role: "Entrenadora y nutrióloga",
+    bio: "Arma tu plan de alimentación según tu objetivo y te guía para lograr resultados sostenibles.",
+  },
+];
+
+export interface GymClass {
+  name: string;
+  schedule: string;
+}
+
+export const GYM_CLASSES: GymClass[] = [
+  { name: "Zumba", schedule: "Lunes a viernes · 7:00 – 8:00 pm" },
 ];
 
 /** Enlace de WhatsApp con mensaje prellenado. */

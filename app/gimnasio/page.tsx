@@ -7,16 +7,20 @@ import {
   Mail,
   MapPin,
   MessageCircle,
+  Music,
   Phone,
   Star,
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
+  GYM_CLASSES,
   GYM_INFO,
   GYM_PLANS,
   GYM_SCHEDULE,
+  GYM_STAFF,
   whatsappLink,
 } from "@/data/gym";
 import { cn } from "@/lib/utils";
@@ -36,7 +40,8 @@ export default function GimnasioPage() {
           Planes de membresía
         </h2>
         <p className="mb-6 text-muted-foreground">
-          Elige el plan que mejor se adapte a ti. Precios de ejemplo.
+          Precios informativos. Escríbenos por WhatsApp para confirmar
+          disponibilidad y promociones.
         </p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {GYM_PLANS.map((plan, i) => (
@@ -84,14 +89,54 @@ export default function GimnasioPage() {
                   >
                     <a
                       href={whatsappLink(
-                        `Hola, me interesa el plan "${plan.name}" de ${GYM_INFO.name}.`
+                        `Hola, quiero información sobre el plan "${plan.name}" de ${GYM_INFO.name}.`
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Lo quiero
+                      Más información
                     </a>
                   </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Equipo: entrenadores y nutriólogos */}
+      <section aria-label="Entrenadores y nutriólogos" className="mt-12">
+        <h2 className="mb-1 text-2xl font-bold tracking-tight">
+          Entrenadores y nutriólogos
+        </h2>
+        <p className="mb-6 text-muted-foreground">
+          El equipo que te acompaña en cada paso.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {GYM_STAFF.map((person, i) => (
+            <motion.div
+              key={person.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.08 }}
+            >
+              <Card className="h-full">
+                <CardContent className="flex items-center gap-4 p-5">
+                  <UserAvatar
+                    name={person.name}
+                    avatar={person.photo}
+                    className="size-16 text-xl"
+                  />
+                  <div className="min-w-0">
+                    <p className="text-lg font-bold">{person.name}</p>
+                    <p className="text-sm font-medium text-primary">
+                      {person.role}
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {person.bio}
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -118,6 +163,18 @@ export default function GimnasioPage() {
                 </li>
               ))}
             </ul>
+            {GYM_CLASSES.map((c) => (
+              <div
+                key={c.name}
+                className="mt-4 flex items-center gap-3 rounded-xl border border-primary/30 bg-primary/5 p-3"
+              >
+                <Music className="size-5 shrink-0 text-primary" />
+                <div>
+                  <p className="font-semibold">Clase de {c.name}</p>
+                  <p className="text-sm text-muted-foreground">{c.schedule}</p>
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
 
