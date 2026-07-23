@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EXERCISES, getExercise, MUSCLE_GROUPS } from "@/data/exercises";
+import { LIBRARY_EXERCISES, getExercise, MUSCLE_GROUPS } from "@/data/exercises";
 import { generateId } from "@/lib/storage";
 import type { CustomRoutine, MuscleGroup, RoutineExercise } from "@/lib/types";
 
@@ -36,8 +36,8 @@ export function RoutineBuilder({ onSave, onCancel }: RoutineBuilderProps) {
   const availableExercises = useMemo(() => {
     const pool =
       muscles.length === 0
-        ? EXERCISES
-        : EXERCISES.filter((e) => muscles.includes(e.group));
+        ? LIBRARY_EXERCISES
+        : LIBRARY_EXERCISES.filter((e) => muscles.includes(e.group));
     return pool.filter((e) => !exercises.some((x) => x.exerciseId === e.id));
   }, [muscles, exercises]);
 

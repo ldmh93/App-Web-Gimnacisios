@@ -9,7 +9,7 @@ import { ExerciseCard } from "@/components/ExerciseCard";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { EXERCISES, MUSCLE_GROUPS } from "@/data/exercises";
+import { LIBRARY_EXERCISES, MUSCLE_GROUPS } from "@/data/exercises";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { saveToStorage, STORAGE_KEYS } from "@/lib/storage";
 import {
@@ -69,7 +69,7 @@ export default function EjerciciosPage() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return EXERCISES.filter((exercise) => {
+    return LIBRARY_EXERCISES.filter((exercise) => {
       const matchesGroup = group === "todos" || exercise.group === group;
       const matchesQuery =
         q === "" ||

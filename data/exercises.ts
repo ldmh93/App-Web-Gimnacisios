@@ -1448,15 +1448,23 @@ export const CURATED_EXERCISES: Exercise[] = [
 ];
 
 /**
- * Biblioteca completa: ejercicios curados + los importados del dataset
- * (con imagen 180×180 y GIF animado, © Gym Visual).
+ * Catálogo completo (interno): ejercicios importados del repositorio + los
+ * curados. Solo se usa para RESOLVER ejercicios por id (p. ej. los que
+ * referencian las rutinas predefinidas). No se muestra tal cual al usuario.
  */
-export const EXERCISES: Exercise[] = [...CURATED_EXERCISES, ...DB_EXERCISES];
+export const EXERCISES: Exercise[] = [...DB_EXERCISES, ...CURATED_EXERCISES];
+
+/**
+ * Biblioteca visible: SOLO los ejercicios del repositorio importado
+ * (con imagen y GIF animado, © Gym Visual). Es lo que se muestra en la página
+ * de ejercicios y en el constructor de rutinas.
+ */
+export const LIBRARY_EXERCISES: Exercise[] = DB_EXERCISES;
 
 export function getExercise(id: string): Exercise | undefined {
   return EXERCISES.find((e) => e.id === id);
 }
 
 export function exercisesByGroup(group: MuscleGroup): Exercise[] {
-  return EXERCISES.filter((e) => e.group === group);
+  return LIBRARY_EXERCISES.filter((e) => e.group === group);
 }
