@@ -16,7 +16,7 @@ export function LogoMark({ className }: LogoMarkProps) {
   return (
     <span
       className={cn(
-        "relative inline-block size-9 shrink-0 overflow-hidden rounded-full ring-1 ring-primary/50",
+        "relative inline-block size-9 shrink-0 overflow-hidden rounded-full ring-1 ring-white/15",
         className
       )}
       aria-hidden="true"
