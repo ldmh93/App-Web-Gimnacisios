@@ -36,14 +36,14 @@ const LEVELS: { id: Level; label: string }[] = [
   { id: "avanzado", label: "Avanzado" },
 ];
 
-/** Genera un número de socio corto y legible: MG-2607-4821 */
+/** Genera un número de socio corto y legible: AG-2607-4821 */
 function newMemberNumber(): string {
   const rnd = Math.floor(1000 + Math.random() * 9000);
   const d = new Date();
   const mmdd = `${String(d.getDate()).padStart(2, "0")}${String(
     d.getMonth() + 1
   ).padStart(2, "0")}`;
-  return `MG-${mmdd}-${rnd}`;
+  return `AG-${mmdd}-${rnd}`;
 }
 
 export default function BienvenidoPage() {
@@ -128,7 +128,7 @@ export default function BienvenidoPage() {
             Crea tu perfil
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Personaliza tu experiencia en MAYCOL GYM. Se guarda en tu
+            Personaliza tu experiencia en AURA GYM. Se guarda en tu
             dispositivo, sin cuentas ni contraseñas.
           </p>
         </div>

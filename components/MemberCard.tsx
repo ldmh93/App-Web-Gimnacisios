@@ -125,12 +125,12 @@ export function MemberCard({ profile }: { profile: UserProfile }) {
           </div>
         </div>
         <div className="size-20 shrink-0 overflow-hidden rounded-lg bg-white p-1">
-          <FakeQR seed={profile.memberNumber ?? "MAYCOL"} />
+          <FakeQR seed={profile.memberNumber ?? "AURA"} />
         </div>
       </div>
 
       <p className="relative mt-5 text-center text-[10px] uppercase tracking-widest text-white/40">
-        MAYCOL GYM · Presenta este carnet en recepción
+        AURA GYM · Presenta este carnet en recepción
       </p>
     </motion.div>
   );

@@ -60,7 +60,7 @@ const FEATURES = [
     icon: Building2,
     title: "El gimnasio",
     description:
-      "Planes de membresía, horarios y contacto directo por WhatsApp con MAYCOL GYM.",
+      "Planes de membresía, horarios y contacto directo por WhatsApp con AURA GYM.",
     href: "/gimnasio",
   },
 ];

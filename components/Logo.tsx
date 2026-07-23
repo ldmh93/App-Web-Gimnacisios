@@ -3,9 +3,9 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 /**
- * Marca MAYCOL GYM.
- * Isotipo: emblema oficial (gorila + disco de 45 lbs) servido desde
- * public/brand/mark.png. Para reemplazarlo basta con sustituir ese archivo.
+ * Marca AURA GYM.
+ * Isotipo: emblema oficial servido desde public/brand/mark.png.
+ * Para reemplazarlo basta con sustituir ese archivo.
  */
 
 interface LogoMarkProps {
@@ -58,7 +58,7 @@ export function Logo({
             textClassName
           )}
         >
-          MAYCOL <span className="text-primary">GYM</span>
+          AURA <span className="text-primary">GYM</span>
         </span>
       )}
     </span>
@@ -67,7 +67,7 @@ export function Logo({
   if (!href) return content;
 
   return (
-    <Link href={href} aria-label="MAYCOL GYM — inicio" className="shrink-0">
+    <Link href={href} aria-label="AURA GYM — inicio" className="shrink-0">
       {content}
     </Link>
   );

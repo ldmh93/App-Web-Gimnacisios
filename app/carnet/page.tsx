@@ -89,7 +89,7 @@ export default function CarnetPage() {
       <PageHeader
         eyebrow="Socio"
         title="Mi carnet"
-        description="Tu credencial digital de MAYCOL GYM. Guardada en tu dispositivo."
+        description="Tu credencial digital de AURA GYM. Guardada en tu dispositivo."
       />
 
       <div className="grid items-start gap-8 lg:grid-cols-2">

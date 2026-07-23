@@ -292,7 +292,7 @@ export default function DashboardPage() {
                       ? "Entrenamiento de hoy · armado por ti en la biblioteca"
                       : suggested && "routineName" in suggested
                         ? `Entrenamiento de hoy · ${suggested.routineName}`
-                        : "Entrenamiento de hoy · sugerencia MAYCOL GYM"}
+                        : "Entrenamiento de hoy · sugerencia AURA GYM"}
                   </CardDescription>
                   <CardTitle className="mt-1 text-xl uppercase tracking-wide">
                     {workout.name.replace("—", "·")}
