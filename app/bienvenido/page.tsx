@@ -110,7 +110,7 @@ export default function BienvenidoPage() {
   };
 
   return (
-    <div className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-4 py-12 sm:px-6">
+    <div className="relative flex min-h-[calc(100vh-5rem)] items-center justify-center overflow-hidden px-4 py-12 sm:px-6">
       {/* Fondo decorativo */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-[-15%] h-[420px] w-[620px] -translate-x-1/2 rounded-full bg-primary/15 blur-[130px]" />

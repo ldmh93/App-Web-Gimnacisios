@@ -9,6 +9,7 @@ import {
   Building2,
   GraduationCap,
   Menu,
+  Pill,
   Settings,
   Trash2,
   UserPlus,
@@ -37,13 +38,20 @@ import { STORAGE_KEYS, removeFromStorage } from "@/lib/storage";
 import type { UserProfile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
+/** Navegación esencial (escritorio). Lo secundario vive en el menú de usuario. */
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/ejercicios", label: "Ejercicios" },
   { href: "/rutinas", label: "Rutinas" },
   { href: "/nutricion", label: "Nutrición" },
-  { href: "/suplementos", label: "Suplementos" },
   { href: "/progreso", label: "Progreso" },
+];
+
+/** Se muestran también en el menú lateral móvil. */
+const SECONDARY_ITEMS = [
+  { href: "/suplementos", label: "Suplementos" },
+  { href: "/gimnasio", label: "El gimnasio" },
+  { href: "/educacion", label: "Educación" },
 ];
 
 export function Header() {
@@ -53,7 +61,6 @@ export function Header() {
     STORAGE_KEYS.profile,
     null
   );
-  const firstName = profile?.name?.split(/\s+/)[0];
 
   const resetLocalData = () => {
     if (
@@ -67,12 +74,17 @@ export function Header() {
   };
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+    <header className="fixed inset-x-0 top-0 z-50 px-3 sm:px-4">
+      <motion.div
+        initial={{ y: -72, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 26 }}
+        className="mx-auto mt-3 flex h-14 max-w-6xl items-center justify-between gap-4 rounded-2xl border border-white/15 bg-background/55 px-3 shadow-lg shadow-black/10 ring-1 ring-black/5 backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/45 sm:px-4 dark:border-white/10"
+      >
         {/* Izquierda: logo + nombre */}
         <Logo />
 
-        {/* Centro: navegación (escritorio) */}
+        {/* Centro: navegación esencial (escritorio) */}
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Principal">
           {NAV_ITEMS.map((item) => {
             const active = pathname.startsWith(item.href);
@@ -80,21 +92,22 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  "relative rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 active:scale-[0.96]",
                   active
-                    ? "text-foreground"
+                    ? "text-primary"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                {item.label}
                 {active && (
                   <motion.span
-                    layoutId="nav-active"
-                    className="absolute inset-x-2 -bottom-[13px] h-0.5 rounded-full bg-primary"
-                    transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                    layoutId="nav-pill"
+                    className="absolute inset-0 -z-10 rounded-full bg-primary/12 ring-1 ring-primary/25"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
+                {item.label}
               </Link>
             );
           })}
@@ -102,23 +115,12 @@ export function Header() {
 
         {/* Derecha: usuario + tema + configuración + menú móvil */}
         <div className="flex items-center gap-1">
-          {profileHydrated && profile && (
-            <span className="mr-1 hidden items-center gap-2 sm:flex">
-              <span className="text-sm font-medium text-muted-foreground">
-                Hola,{" "}
-                <span className="font-semibold text-foreground">
-                  {firstName}
-                </span>{" "}
-                👋
-              </span>
-            </span>
-          )}
           {profileHydrated && !profile && (
             <Button
               asChild
               size="sm"
               variant="outline"
-              className="mr-1 hidden sm:inline-flex"
+              className="mr-1 hidden rounded-full sm:inline-flex"
             >
               <Link href="/bienvenido">
                 <UserPlus className="size-4" />
@@ -196,6 +198,12 @@ export function Header() {
               )}
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
+                <Link href="/suplementos">
+                  <Pill className="size-4" />
+                  Suplementos
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link href="/gimnasio">
                   <Building2 className="size-4" />
                   El gimnasio
@@ -253,15 +261,19 @@ export function Header() {
                   ...(profile
                     ? [{ href: "/carnet", label: "Mi carnet" }]
                     : [{ href: "/bienvenido", label: "Crear perfil" }]),
-                  { href: "/gimnasio", label: "El gimnasio" },
-                  { href: "/educacion", label: "Educación" },
-                ].map((item) => (
+                  ...SECONDARY_ITEMS,
+                ].map((item, i) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, x: 16 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.04 * i, duration: 0.25 }}
+                  >
                     <Link
-                      key={item.href}
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
                       className={cn(
-                        "rounded-lg px-4 py-3 text-base font-medium transition-colors",
+                        "block rounded-xl px-4 py-3 text-base font-medium transition-colors active:scale-[0.98]",
                         pathname.startsWith(item.href)
                           ? "bg-primary/10 text-primary"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -269,13 +281,13 @@ export function Header() {
                     >
                       {item.label}
                     </Link>
-                  )
-                )}
+                  </motion.div>
+                ))}
               </nav>
             </SheetContent>
           </Sheet>
         </div>
-      </div>
+      </motion.div>
     </header>
   );
 }

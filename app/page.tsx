@@ -92,7 +92,7 @@ export default function LandingPage() {
       </div>
 
       {/* Hero */}
-      <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col items-center justify-center px-4 py-20 text-center sm:px-6">
+      <section className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-5xl flex-col items-center justify-center px-4 py-20 text-center sm:px-6">
         <motion.div
           variants={container}
           initial="hidden"
