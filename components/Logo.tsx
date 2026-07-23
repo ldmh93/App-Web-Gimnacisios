@@ -25,7 +25,7 @@ export function LogoMark({ className }: LogoMarkProps) {
         src="/brand/mark.png"
         alt=""
         fill
-        sizes="128px"
+        sizes="192px"
         className="object-cover"
         priority
       />

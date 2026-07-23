@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { LogoMark } from "@/components/Logo";
 import { GymCarousel } from "@/components/GymCarousel";
+import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -85,11 +86,8 @@ export default function LandingPage() {
 
   return (
     <div className="relative overflow-hidden">
-      {/* Fondo decorativo */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-[-20%] h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-primary/15 blur-[140px]" />
-        <div className="absolute bottom-[-30%] right-[-10%] h-[420px] w-[420px] rounded-full bg-primary/10 blur-[120px]" />
-      </div>
+      {/* Fondo dinámico e interactivo */}
+      <InteractiveBackground />
 
       {/* Hero */}
       <section className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-5xl flex-col items-center justify-center px-4 py-20 text-center sm:px-6">
@@ -99,9 +97,29 @@ export default function LandingPage() {
           animate="show"
           className="flex flex-col items-center"
         >
-          <motion.div variants={item} className="relative mb-8">
-            <div className="absolute inset-0 rounded-full bg-primary/25 blur-3xl" />
-            <LogoMark className="relative h-24 w-24 sm:h-28 sm:w-28" />
+          <motion.div variants={item} className="relative mb-10">
+            {/* Halo pulsante detrás del logo */}
+            <motion.div
+              aria-hidden
+              className="absolute left-1/2 top-1/2 -z-10 size-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/30 blur-3xl sm:size-56"
+              animate={{ scale: [1, 1.18, 1], opacity: [0.5, 0.85, 0.5] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+            />
+            {/* Flotación continua */}
+            <motion.div
+              animate={{ y: [0, -12, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            >
+              {/* Interacción al pasar el cursor */}
+              <motion.div
+                whileHover={{ scale: 1.07, rotate: 3 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 300, damping: 18 }}
+                className="cursor-pointer drop-shadow-[0_10px_30px_rgba(225,29,46,0.45)]"
+              >
+                <LogoMark className="relative h-36 w-36 sm:h-44 sm:w-44" />
+              </motion.div>
+            </motion.div>
           </motion.div>
 
           <motion.h1
