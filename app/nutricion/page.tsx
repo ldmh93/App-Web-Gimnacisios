@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Beef, Calculator, Droplets, Flame, HeartPulse, Wheat } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
@@ -47,15 +47,29 @@ const DEFAULT_FORM = {
 };
 
 export default function NutricionPage() {
-  const [, setProfile] = useLocalStorage<UserProfile | null>(
-    STORAGE_KEYS.profile,
-    null
-  );
+  const [profile, setProfile, profileHydrated] =
+    useLocalStorage<UserProfile | null>(STORAGE_KEYS.profile, null);
   const [nutrition, setNutrition] = useLocalStorage<NutritionResult | null>(
     STORAGE_KEYS.nutrition,
     null
   );
   const [form, setForm] = useState(DEFAULT_FORM);
+
+  // Autollenado: si ya existe perfil, partimos de sus datos en vez de pedirlos
+  // otra vez. Solo se ejecuta al hidratar para no pisar lo que el usuario teclea.
+  useEffect(() => {
+    if (!profileHydrated || !profile) return;
+    setForm({
+      age: String(profile.age),
+      sex: profile.sex,
+      weight: String(profile.weight),
+      height: String(profile.height),
+      activity: profile.activity ?? "moderado",
+      goal: profile.goal,
+      targetWeight: profile.targetWeight ? String(profile.targetWeight) : "",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileHydrated]);
 
   const set = (field: keyof typeof DEFAULT_FORM) => (value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -70,17 +84,23 @@ export default function NutricionPage() {
 
   const calculate = () => {
     if (!valid) return;
-    const profile: UserProfile = {
+    // Merge sobre el perfil existente: conservamos identidad de socio
+    // (nombre, foto, nº de socio, nivel, plan…) y solo actualizamos los
+    // datos físicos y el objetivo que edita esta calculadora.
+    const updated: UserProfile = {
+      ...profile,
       age: Number(form.age),
       sex: form.sex,
       weight: Number(form.weight),
       height: Number(form.height),
       activity: form.activity,
       goal: form.goal,
-      targetWeight: form.targetWeight ? Number(form.targetWeight) : undefined,
+      targetWeight: form.targetWeight
+        ? Number(form.targetWeight)
+        : profile?.targetWeight,
     };
-    setProfile(profile);
-    setNutrition(calculateNutrition(profile));
+    setProfile(updated);
+    setNutrition(calculateNutrition(updated));
   };
 
   return (
