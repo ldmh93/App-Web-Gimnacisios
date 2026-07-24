@@ -1,48 +1,25 @@
 "use client";
 
 import { useMemo } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  Beef,
-  Calculator,
-  Dumbbell,
-  Flame,
-  Droplets,
-  Scale,
-  Target,
-  Wheat,
-} from "lucide-react";
-import { PageHeader } from "@/components/PageHeader";
-import { MacroCard } from "@/components/MacroCard";
-import { Badge } from "@/components/ui/badge";
+import { Beef, Calculator, Flame, Scale, UserPlus } from "lucide-react";
+import { StatTile } from "@/components/StatTile";
+import { TodayWorkoutCard } from "@/components/TodayWorkoutCard";
+import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent } from "@/components/ui/card";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useTodaySession } from "@/hooks/useTodaySession";
 import { STORAGE_KEYS } from "@/lib/storage";
-import {
-  EMPTY_TODAY_ROUTINE,
-  todayKey,
-  type TodayRoutine,
-} from "@/lib/workout";
 import type {
   NutritionResult,
   ProgressEntry,
   UserProfile,
 } from "@/lib/types";
 import { GOAL_ADJUSTMENTS } from "@/utils/calories";
-import { getExercise } from "@/data/exercises";
 import { getPredefinedRoutine, recommendRoutine } from "@/data/routines";
-import { UserAvatar } from "@/components/UserAvatar";
-import { BadgeCheck, UserPlus } from "lucide-react";
 
 /** Valores de ejemplo mientras el usuario no calcula su plan en Nutrición. */
 const DEFAULTS = {
@@ -50,14 +27,7 @@ const DEFAULTS = {
   goalLabel: "Ganar músculo",
   calories: 2500,
   protein: 160,
-  carbs: 280,
-  fats: 70,
 };
-
-interface DashboardChecks {
-  date: string;
-  done: Record<string, boolean>;
-}
 
 /**
  * Rotación simple del día según la rutina recomendada para el socio.
@@ -78,6 +48,7 @@ function todaysWorkout(profile: UserProfile | null) {
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [profile] = useLocalStorage<UserProfile | null>(
     STORAGE_KEYS.profile,
     null
@@ -90,179 +61,150 @@ export default function DashboardPage() {
     STORAGE_KEYS.progress,
     []
   );
-  const [checks, setChecks] = useLocalStorage<DashboardChecks>(
-    STORAGE_KEYS.dashboardChecks,
-    { date: todayKey(), done: {} }
-  );
-  const [todayRoutine] = useLocalStorage<TodayRoutine>(
-    STORAGE_KEYS.todayRoutine,
-    EMPTY_TODAY_ROUTINE
-  );
+  const { plan, session, startSession } = useTodaySession();
 
   const suggested = useMemo(() => todaysWorkout(profile), [profile]);
 
-  // Si el usuario armó su rutina desde la biblioteca, tiene prioridad
-  // sobre la sugerencia automática del día.
-  const customToday =
-    todayRoutine.date === todayKey() && todayRoutine.exercises.length > 0;
-  const workout = customToday
-    ? { name: "Mi rutina de hoy", exercises: todayRoutine.exercises }
-    : suggested;
+  // El plan armado en la biblioteca tiene prioridad sobre la sugerencia del día.
+  const workout =
+    plan.length > 0
+      ? {
+          name: "Mi rutina de hoy",
+          source: "Armado por ti en la biblioteca",
+          exercises: plan,
+        }
+      : suggested
+        ? {
+            name: suggested.name,
+            source: `Sugerencia · ${suggested.routineName}`,
+            exercises: suggested.exercises,
+          }
+        : null;
+
+  const inProgress = Boolean(session && !session.completed);
+
+  // Una sola acción: si hay sesión en curso la continúa; si no, la crea desde
+  // el entrenamiento de hoy. En ambos casos se entrena en /rutinas.
+  const handleTrain = () => {
+    if (!inProgress && workout) {
+      startSession(workout.name, workout.exercises);
+    }
+    router.push("/rutinas");
+  };
 
   const latestWeight =
     progressEntries.length > 0
       ? progressEntries[progressEntries.length - 1].weight
       : profile?.weight ?? DEFAULTS.weight;
-
   const goalLabel = profile
     ? GOAL_ADJUSTMENTS[profile.goal].label
     : DEFAULTS.goalLabel;
+  const calories = nutrition?.calories ?? DEFAULTS.calories;
+  const protein = nutrition?.protein ?? DEFAULTS.protein;
 
-  const macros = nutrition ?? {
-    calories: DEFAULTS.calories,
-    protein: DEFAULTS.protein,
-    carbs: DEFAULTS.carbs,
-    fats: DEFAULTS.fats,
-  };
-
-  // El checklist se reinicia automáticamente cada día.
-  const doneToday = checks.date === todayKey() ? checks.done : {};
-  const totalExercises = workout?.exercises.length ?? 0;
-  const completed = workout
-    ? workout.exercises.filter((e) => doneToday[e.exerciseId]).length
-    : 0;
-  const percent = totalExercises > 0 ? (completed / totalExercises) * 100 : 0;
-
-  const toggleExercise = (exerciseId: string, value: boolean) => {
-    setChecks({
-      date: todayKey(),
-      done: { ...doneToday, [exerciseId]: value },
-    });
-  };
+  const today = new Date().toLocaleDateString("es", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10">
+      {/* Saludo compacto o invitación a crear perfil (un solo aviso, sin apilar) */}
       {profile ? (
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <UserAvatar
-              name={profile.name}
-              avatar={profile.avatar}
-              className="size-14 text-lg"
-            />
-            <div>
-              <p className="text-sm text-muted-foreground">
-                {new Date().toLocaleDateString("es", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                })}
-              </p>
-              <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Hola, {profile.name?.split(/\s+/)[0]} 👋
-              </h1>
-            </div>
+        <div className="mb-6 flex items-center gap-3">
+          <UserAvatar
+            name={profile.name}
+            avatar={profile.avatar}
+            className="size-12 text-base"
+          />
+          <div className="min-w-0">
+            <p className="text-xs capitalize text-muted-foreground">{today}</p>
+            <h1 className="truncate text-xl font-extrabold tracking-tight sm:text-2xl">
+              Hola, {profile.name?.split(/\s+/)[0]} 👋
+            </h1>
           </div>
-          <Button asChild variant="outline">
-            <Link href="/carnet">
-              <BadgeCheck className="size-4" />
-              Mi carnet de socio
-            </Link>
-          </Button>
         </div>
       ) : (
-        <>
-          <PageHeader
-            eyebrow="Dashboard"
-            title="Tu centro de mando"
-            description="Resumen corporal, objetivos nutricionales y el entrenamiento de hoy en un vistazo."
-          />
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3"
-          >
-            <p className="text-sm text-muted-foreground">
-              Crea tu perfil de socio para personalizar tu plan, tus macros y tu
-              rutina.
-            </p>
-            <Button asChild size="sm" className="glow-primary-soft">
-              <Link href="/bienvenido">
-                <UserPlus className="size-4" />
-                Crear mi perfil
-              </Link>
-            </Button>
-          </motion.div>
-        </>
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6"
+        >
+          <Card className="border-primary/30 bg-primary/5">
+            <CardContent className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-sm text-muted-foreground">
+                Crea tu perfil para personalizar tu plan, tus macros y tu rutina.
+              </p>
+              <Button asChild size="sm" className="glow-primary-soft">
+                <Link href="/bienvenido">
+                  <UserPlus className="size-4" />
+                  Crear mi perfil
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
 
-      {/* Resumen corporal */}
-      <section aria-label="Resumen corporal">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <MacroCard
-            label="Peso actual"
-            value={latestWeight}
-            unit="kg"
-            icon={Scale}
-            hint={
-              progressEntries.length > 0
-                ? "Último registro en Progreso"
-                : "Regístralo en Progreso"
-            }
-            delay={0}
-          />
-          <MacroCard
-            label="Objetivo"
-            value={goalLabel}
-            icon={Target}
-            hint={
-              profile?.targetWeight
-                ? `Meta: ${profile.targetWeight} kg`
-                : "Defínelo en Nutrición"
-            }
-            delay={0.05}
-          />
-          <MacroCard
-            label="Calorías diarias"
-            value={macros.calories.toLocaleString("es")}
+      {/* Entrenamiento de hoy: la acción principal de la pantalla */}
+      {workout && (
+        <TodayWorkoutCard
+          name={workout.name}
+          source={workout.source}
+          exercises={workout.exercises}
+          session={session}
+          onTrain={handleTrain}
+        />
+      )}
+
+      {/* Resumen nutricional: 3 datos glanceables + enlace al plan completo */}
+      <section aria-label="Resumen nutricional" className="mt-6">
+        <div className="mb-2 flex items-center justify-between px-1">
+          <h2 className="text-sm font-semibold text-muted-foreground">
+            Tu plan de hoy
+          </h2>
+          <Link
+            href="/nutricion"
+            className="text-sm font-medium text-primary transition-colors hover:text-primary/80"
+          >
+            Ver plan completo
+          </Link>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <StatTile
+            label="Calorías"
+            value={calories.toLocaleString("es")}
             unit="kcal"
             icon={Flame}
             accent
-            delay={0.1}
+            delay={0}
           />
-          <MacroCard
+          <StatTile
             label="Proteína"
-            value={macros.protein}
+            value={protein}
             unit="g"
             icon={Beef}
-            delay={0.15}
+            delay={0.05}
           />
-          <MacroCard
-            label="Carbohidratos"
-            value={macros.carbs}
-            unit="g"
-            icon={Wheat}
-            delay={0.2}
-          />
-          <MacroCard
-            label="Grasas"
-            value={macros.fats}
-            unit="g"
-            icon={Droplets}
-            delay={0.25}
+          <StatTile
+            label="Peso"
+            value={latestWeight}
+            unit="kg"
+            icon={Scale}
+            delay={0.1}
           />
         </div>
 
-        {!nutrition && (
+        {!nutrition ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.35 }}
-            className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm"
+            transition={{ delay: 0.2 }}
+            className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm"
           >
             <p className="text-muted-foreground">
-              Estos son valores de ejemplo. Calcula tu plan personalizado en 1
-              minuto.
+              Valores de ejemplo. Calcula tu plan personalizado en 1 minuto.
             </p>
             <Button asChild size="sm" variant="outline">
               <Link href="/nutricion">
@@ -271,96 +213,12 @@ export default function DashboardPage() {
               </Link>
             </Button>
           </motion.div>
+        ) : (
+          <p className="mt-2 px-1 text-xs text-muted-foreground">
+            Objetivo: {goalLabel}
+          </p>
         )}
       </section>
-
-      {/* Entrenamiento del día */}
-      {workout && (
-        <motion.section
-          aria-label="Entrenamiento del día"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.2 }}
-          className="mt-10"
-        >
-          <Card>
-            <CardHeader>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <CardDescription>
-                    {customToday
-                      ? "Entrenamiento de hoy · armado por ti en la biblioteca"
-                      : suggested && "routineName" in suggested
-                        ? `Entrenamiento de hoy · ${suggested.routineName}`
-                        : "Entrenamiento de hoy · sugerencia AURA GYM"}
-                  </CardDescription>
-                  <CardTitle className="mt-1 text-xl uppercase tracking-wide">
-                    {workout.name.replace("—", "·")}
-                  </CardTitle>
-                </div>
-                <Badge variant="outline" className="gap-1.5">
-                  <Dumbbell className="size-3.5" />
-                  {completed}/{totalExercises} ejercicios
-                </Badge>
-              </div>
-              <div className="mt-3 flex items-center gap-3">
-                <Progress value={percent} className="h-2.5" />
-                <span className="w-12 shrink-0 text-right text-sm font-semibold tabular-nums text-primary">
-                  {Math.round(percent)}%
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ul className="divide-y divide-border">
-                {workout.exercises.map((item) => {
-                  const exercise = getExercise(item.exerciseId);
-                  if (!exercise) return null;
-                  const checked = Boolean(doneToday[item.exerciseId]);
-                  return (
-                    <li key={item.exerciseId}>
-                      <label className="flex cursor-pointer items-center gap-4 py-3 transition-colors hover:bg-muted/50">
-                        <Checkbox
-                          checked={checked}
-                          onCheckedChange={(v) =>
-                            toggleExercise(item.exerciseId, v === true)
-                          }
-                          className="size-5"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <p
-                            className={
-                              checked
-                                ? "font-medium text-muted-foreground line-through"
-                                : "font-medium"
-                            }
-                          >
-                            {exercise.name}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {item.sets} × {item.reps}
-                          </p>
-                        </div>
-                      </label>
-                    </li>
-                  );
-                })}
-              </ul>
-
-              <div className="mt-4 flex flex-wrap gap-3">
-                <Button asChild>
-                  <Link href="/rutinas">
-                    <Dumbbell className="size-4" />
-                    Entrenar con registro completo
-                  </Link>
-                </Button>
-                <Button asChild variant="outline">
-                  <Link href="/rutinas#predefinidas">Ver otras rutinas</Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.section>
-      )}
     </div>
   );
 }

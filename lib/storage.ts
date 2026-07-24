@@ -11,7 +11,6 @@ export const STORAGE_KEYS = {
   workoutSessions: "fitcore:workout-sessions",
   activeWorkout: "fitcore:active-workout",
   progress: "fitcore:progress",
-  dashboardChecks: "fitcore:dashboard-checks",
   todayRoutine: "fitcore:today-routine",
 } as const;
 
