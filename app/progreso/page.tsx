@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Camera,
   LineChart,
   MoveDown,
   MoveRight,
@@ -126,7 +125,7 @@ export default function ProgresoPage() {
   const last = sorted[sorted.length - 1];
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
       <PageHeader
         eyebrow="Seguimiento"
         title="Progreso"
@@ -305,33 +304,6 @@ export default function ProgresoPage() {
               </Card>
             </motion.div>
           )}
-
-          {/* ------------------------- Fotos de progreso ------------------------- */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Camera className="size-5 text-primary" />
-                Fotos de progreso
-              </CardTitle>
-              <CardDescription>
-                Disponible próximamente: guarda fotos de antes y después para
-                comparar tu transformación visual.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-3 gap-3">
-                {["Antes", "Durante", "Ahora"].map((label) => (
-                  <div
-                    key={label}
-                    className="flex aspect-[3/4] flex-col items-center justify-center gap-2 rounded-xl border border-dashed bg-muted/40 text-muted-foreground"
-                  >
-                    <Camera className="size-6" />
-                    <span className="text-xs font-medium">{label}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
 

@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -76,13 +78,24 @@ const item = {
 };
 
 export default function LandingPage() {
-  const [profile] = useLocalStorage<UserProfile | null>(
+  const router = useRouter();
+  const [profile, , hydrated] = useLocalStorage<UserProfile | null>(
     STORAGE_KEYS.profile,
     null
   );
+
+  // Si ya hay perfil, la landing de marketing no aporta: el socio aterriza
+  // directamente en su Dashboard (P8).
+  useEffect(() => {
+    if (hydrated && profile) router.replace("/dashboard");
+  }, [hydrated, profile, router]);
+
+  // Evita el parpadeo de la landing mientras se redirige a un socio existente.
+  if (hydrated && profile) return null;
+
   // Si aún no hay perfil, el botón principal lleva a crear la cuenta.
-  const startHref = profile ? "/dashboard" : "/bienvenido";
-  const startLabel = profile ? "Comenzar entrenamiento" : "Crear mi cuenta";
+  const startHref = "/bienvenido";
+  const startLabel = "Crear mi cuenta";
 
   return (
     <div className="relative overflow-hidden">

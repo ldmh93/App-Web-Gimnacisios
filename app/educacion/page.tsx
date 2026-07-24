@@ -17,7 +17,7 @@ import { ARTICLES } from "@/data/articles";
 
 export default function EducacionPage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-10">
       <PageHeader
         eyebrow="Aprende"
         title="Educación fitness"
