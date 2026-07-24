@@ -6,19 +6,19 @@ import { motion } from "framer-motion";
 import {
   ClipboardList,
   Dumbbell,
-  LayoutDashboard,
-  LineChart,
+  Home,
+  UserRound,
   UtensilsCrossed,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /** Accesos principales de la barra inferior (solo móvil/tablet). */
 const ITEMS = [
-  { href: "/dashboard", label: "Inicio", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Hoy", icon: Home },
   { href: "/ejercicios", label: "Ejercicios", icon: Dumbbell },
   { href: "/rutinas", label: "Rutinas", icon: ClipboardList },
   { href: "/nutricion", label: "Nutrición", icon: UtensilsCrossed },
-  { href: "/progreso", label: "Progreso", icon: LineChart },
+  { href: "/perfil", label: "Perfil", icon: UserRound },
 ];
 
 export function BottomNav() {
@@ -44,7 +44,7 @@ export function BottomNav() {
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "relative flex flex-1 flex-col items-center gap-0.5 rounded-full px-1 py-2 text-[10px] font-medium transition-colors duration-200 active:scale-[0.92]",
+                "relative flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-[11px] font-medium transition-colors duration-200 active:scale-[0.92]",
                 active
                   ? "text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground"
@@ -61,7 +61,7 @@ export function BottomNav() {
                 animate={{ scale: active ? 1.1 : 1 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
               >
-                <Icon className="size-5" />
+                <Icon className="size-[22px]" />
               </motion.span>
               <span className="leading-none">{item.label}</span>
             </Link>
