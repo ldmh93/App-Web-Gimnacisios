@@ -6,6 +6,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Camera, Sparkles, UserRound } from "lucide-react";
 import { LogoMark } from "@/components/Logo";
+import { BodyDataFields } from "@/components/BodyDataFields";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -183,53 +184,15 @@ export default function BienvenidoPage() {
           </div>
 
           {/* Datos físicos */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="age">Edad</Label>
-              <Input
-                id="age"
-                type="number"
-                min={14}
-                max={100}
-                value={form.age}
-                onChange={(e) => set("age")(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Sexo</Label>
-              <Select value={form.sex} onValueChange={set("sex")}>
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="hombre">Hombre</SelectItem>
-                  <SelectItem value="mujer">Mujer</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="weight">Peso (kg)</Label>
-              <Input
-                id="weight"
-                type="number"
-                min={30}
-                max={300}
-                value={form.weight}
-                onChange={(e) => set("weight")(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="height">Altura (cm)</Label>
-              <Input
-                id="height"
-                type="number"
-                min={120}
-                max={230}
-                value={form.height}
-                onChange={(e) => set("height")(e.target.value)}
-              />
-            </div>
-          </div>
+          <BodyDataFields
+            values={{
+              age: form.age,
+              sex: form.sex,
+              weight: form.weight,
+              height: form.height,
+            }}
+            onChange={(field, value) => set(field)(value)}
+          />
 
           {/* Objetivo y nivel */}
           <div className="grid grid-cols-2 gap-3">

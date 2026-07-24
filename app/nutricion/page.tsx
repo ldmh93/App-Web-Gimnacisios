@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Beef, Calculator, Droplets, Flame, HeartPulse, Wheat } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { BodyDataFields } from "@/components/BodyDataFields";
 import { DietCard } from "@/components/DietCard";
 import { Button } from "@/components/ui/button";
 import {
@@ -124,53 +125,16 @@ export default function NutricionPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="age">Edad</Label>
-                <Input
-                  id="age"
-                  type="number"
-                  min={14}
-                  max={100}
-                  value={form.age}
-                  onChange={(e) => set("age")(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Sexo</Label>
-                <Select value={form.sex} onValueChange={(v) => set("sex")(v)}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="hombre">Hombre</SelectItem>
-                    <SelectItem value="mujer">Mujer</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="weight">Peso (kg)</Label>
-                <Input
-                  id="weight"
-                  type="number"
-                  min={30}
-                  max={300}
-                  value={form.weight}
-                  onChange={(e) => set("weight")(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="height">Altura (cm)</Label>
-                <Input
-                  id="height"
-                  type="number"
-                  min={120}
-                  max={230}
-                  value={form.height}
-                  onChange={(e) => set("height")(e.target.value)}
-                />
-              </div>
-            </div>
+            <BodyDataFields
+              idPrefix="nut-"
+              values={{
+                age: form.age,
+                sex: form.sex,
+                weight: form.weight,
+                height: form.height,
+              }}
+              onChange={(field, value) => set(field)(value)}
+            />
 
             <div className="space-y-2">
               <Label>Nivel de actividad</Label>
