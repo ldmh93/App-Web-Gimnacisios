@@ -1,14 +1,23 @@
 FOTOS DEL GIMNASIO (carrusel de la página principal)
 =====================================================
 
-Coloca aquí tus fotos nombradas así (en formato .jpg):
+Estas fotos (foto-1.jpg … foto-8.jpg) son imágenes reales de stock
+descargadas de Pexels (https://www.pexels.com).
 
-  foto-1.jpg
-  foto-2.jpg
-  foto-3.jpg
-  ... hasta foto-12.jpg
+Licencia Pexels: uso gratuito personal y comercial, no requiere
+atribución y se permite modificarlas. Aun así, se listan los créditos:
 
-El carrusel de la página de inicio las detecta automáticamente:
-no hay que tocar código. El orden del carrusel es el del número.
+  foto-1  ->  pexels.com/photo/1954524   (zona de cardio)
+  foto-2  ->  pexels.com/photo/260352    (rack de mancuernas)
+  foto-3  ->  pexels.com/photo/116077    (sentadilla frontal)
+  foto-4  ->  pexels.com/photo/2261477   (peso muerto)
+  foto-5  ->  pexels.com/photo/3253501   (cuerdas de batalla)
+  foto-6  ->  pexels.com/photo/1552252   (barra y discos)
+  foto-7  ->  pexels.com/photo/2827400   (calistenia)
+  foto-8  ->  pexels.com/photo/949132    (discos y cinturón)
+
+Para usar TUS fotos reales del gimnasio, reemplaza estos archivos
+manteniendo el nombre (foto-1.jpg, foto-2.jpg, …, hasta foto-12.jpg).
+El carrusel las detecta automáticamente: no hay que tocar código.
 
 Recomendado: fotos horizontales (16:9), ~1600 px de ancho.
