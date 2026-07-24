@@ -96,14 +96,14 @@ export interface StaffMember {
 
 export const GYM_STAFF: StaffMember[] = [
   {
-    id: "maycol",
-    name: "Maycol",
+    id: "entrenador-1",
+    name: "Diego Herrera",
     role: "Entrenador y nutriólogo",
     bio: "Diseña tu plan de entrenamiento y te acompaña para que entrenes con buena técnica y progreses seguro.",
   },
   {
-    id: "adamaris",
-    name: "Adamaris",
+    id: "entrenador-2",
+    name: "Valeria Fuentes",
     role: "Entrenadora y nutrióloga",
     bio: "Arma tu plan de alimentación según tu objetivo y te guía para lograr resultados sostenibles.",
   },
