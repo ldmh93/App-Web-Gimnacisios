@@ -10,15 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LIBRARY_EXERCISES, MUSCLE_GROUPS } from "@/data/exercises";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { saveToStorage, STORAGE_KEYS } from "@/lib/storage";
-import {
-  buildSession,
-  EMPTY_TODAY_ROUTINE,
-  todayKey,
-  type TodayRoutine,
-} from "@/lib/workout";
-import type { Exercise, MuscleGroup } from "@/lib/types";
+import { useTodaySession } from "@/hooks/useTodaySession";
+import type { MuscleGroup } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 /** Cuántas tarjetas se muestran por tanda (carga progresiva). */
@@ -29,41 +22,25 @@ export default function EjerciciosPage() {
   const [group, setGroup] = useState<MuscleGroup | "todos">("todos");
   const [query, setQuery] = useState("");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [todayRoutine, setTodayRoutine] = useLocalStorage<TodayRoutine>(
-    STORAGE_KEYS.todayRoutine,
-    EMPTY_TODAY_ROUTINE
-  );
 
-  // La rutina del día caduca a medianoche: si es de otro día, se ignora.
-  const todayExercises =
-    todayRoutine.date === todayKey() ? todayRoutine.exercises : [];
-
-  const isInToday = (exerciseId: string) =>
-    todayExercises.some((e) => e.exerciseId === exerciseId);
-
-  const toggleToday = (exercise: Exercise) => {
-    setTodayRoutine({
-      date: todayKey(),
-      exercises: isInToday(exercise.id)
-        ? todayExercises.filter((e) => e.exerciseId !== exercise.id)
-        : [
-            ...todayExercises,
-            { exerciseId: exercise.id, sets: exercise.sets, reps: exercise.reps },
-          ],
-    });
-  };
+  // Estado unificado del entrenamiento de hoy (compartido con Dashboard y Rutinas).
+  const {
+    plan: todayExercises,
+    totalSets,
+    isInPlan: isInToday,
+    toggleExercise: toggleToday,
+    clearPlan,
+    startSession,
+  } = useTodaySession();
 
   const clearToday = () => {
     if (window.confirm("¿Vaciar tu rutina de hoy?")) {
-      setTodayRoutine(EMPTY_TODAY_ROUTINE);
+      clearPlan();
     }
   };
 
   const trainNow = () => {
-    saveToStorage(
-      STORAGE_KEYS.activeWorkout,
-      buildSession("Mi rutina de hoy", todayExercises)
-    );
+    startSession("Mi rutina de hoy", todayExercises);
     router.push("/rutinas");
   };
 
@@ -202,8 +179,7 @@ export default function EjerciciosPage() {
                 <p className="text-sm font-semibold">Mi rutina de hoy</p>
                 <p className="truncate text-xs text-muted-foreground">
                   {todayExercises.length} ejercicio
-                  {todayExercises.length !== 1 && "s"} ·{" "}
-                  {todayExercises.reduce((acc, e) => acc + e.sets, 0)} series
+                  {todayExercises.length !== 1 && "s"} · {totalSets} series
                 </p>
               </div>
               <Button
