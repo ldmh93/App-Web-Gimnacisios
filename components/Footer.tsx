@@ -32,7 +32,7 @@ export function Footer() {
           </a>
         </div>
         <p className="text-[11px] text-muted-foreground/70">
-          © {new Date().getFullYear()} AURA GYM · Todos los derechos
+          © {new Date().getFullYear()} MORA&apos;S GYM · Todos los derechos
           reservados
         </p>
       </div>

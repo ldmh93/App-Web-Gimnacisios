@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "AURA GYM — Tu entrenador personal digital",
-    template: "%s | AURA GYM",
+    default: "MORA'S GYM — Tu entrenador personal digital",
+    template: "%s | MORA'S GYM",
   },
   description:
     "Entrena, aliméntate y controla tu progreso desde una sola plataforma. Rutinas inteligentes, planes nutricionales y seguimiento corporal.",

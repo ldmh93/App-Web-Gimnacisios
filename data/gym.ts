@@ -1,18 +1,18 @@
 /**
- * Datos del gimnasio (AURA GYM).
+ * Datos del gimnasio (MORA'S GYM).
  * Valores de ejemplo: reemplázalos por los reales cuando los tengas.
  * Cuando exista base de datos, esto vendrá de la tabla `gyms`.
  */
 
 export const GYM_INFO = {
-  name: "AURA GYM",
+  name: "MORA'S GYM",
   slogan: "Transforma tu cuerpo. Construye tu mejor versión.",
   phone: "417 127 9042",
   /** Número internacional para el enlace de WhatsApp (sin +, espacios ni signos). */
   whatsapp: "524171279042",
-  email: "contacto@auragym.com",
+  email: "contacto@morasgym.com",
   address: "Av. Principal 123, Centro, tu ciudad",
-  instagram: "@auragym",
+  instagram: "@morasgym",
 };
 
 export interface GymPlan {
@@ -46,7 +46,7 @@ export const GYM_PLANS: GymPlan[] = [
       "Acceso ilimitado todo el mes",
       "Rutina personalizada",
       "Asesoría de los entrenadores",
-      "Acceso a la app AURA GYM",
+      "Acceso a la app MORA'S GYM",
     ],
   },
   {

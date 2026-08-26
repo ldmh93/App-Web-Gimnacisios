@@ -19,7 +19,7 @@ import type { RoutineExercise, WorkoutSession } from "@/lib/types";
 interface TodayWorkoutCardProps {
   /** Nombre del entrenamiento planificado para hoy. */
   name: string;
-  /** Etiqueta de origen (p. ej. "armado por ti" o "sugerencia AURA GYM"). */
+  /** Etiqueta de origen (p. ej. "armado por ti" o "sugerencia MORA'S GYM"). */
   source: string;
   /** Ejercicios planificados para hoy. */
   exercises: RoutineExercise[];

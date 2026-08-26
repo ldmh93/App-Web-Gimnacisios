@@ -13,7 +13,7 @@ import {
   LineChart,
   UtensilsCrossed,
 } from "lucide-react";
-import { LogoMark } from "@/components/Logo";
+import { LogoFull } from "@/components/Logo";
 import { GymCarousel } from "@/components/GymCarousel";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { Button } from "@/components/ui/button";
@@ -62,7 +62,7 @@ const FEATURES = [
     icon: Building2,
     title: "El gimnasio",
     description:
-      "Planes de membresía, horarios y contacto directo por WhatsApp con AURA GYM.",
+      "Planes de membresía, horarios y contacto directo por WhatsApp con MORA'S GYM.",
     href: "/gimnasio",
   },
 ];
@@ -130,7 +130,7 @@ export default function LandingPage() {
                 transition={{ type: "spring", stiffness: 300, damping: 18 }}
                 className="cursor-pointer drop-shadow-[0_10px_30px_rgba(225,29,46,0.45)]"
               >
-                <LogoMark className="relative h-36 w-36 sm:h-44 sm:w-44" />
+                <LogoFull priority className="h-44 sm:h-56" />
               </motion.div>
             </motion.div>
           </motion.div>

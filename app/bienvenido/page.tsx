@@ -129,7 +129,7 @@ export default function BienvenidoPage() {
             Crea tu perfil
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Personaliza tu experiencia en AURA GYM. Se guarda en tu
+            Personaliza tu experiencia en MORA&apos;S GYM. Se guarda en tu
             dispositivo, sin cuentas ni contraseñas.
           </p>
         </div>
