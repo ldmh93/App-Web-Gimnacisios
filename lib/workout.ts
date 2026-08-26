@@ -42,3 +42,19 @@ export function buildSession(
     }),
   };
 }
+
+/**
+ * Duración estimada de una sesión, en minutos.
+ * Aproximación: ~45 s de trabajo efectivo por serie más el descanso declarado
+ * del ejercicio (si no se puede leer, 75 s). Redondeado a 5 min porque una
+ * cifra exacta daría una falsa sensación de precisión.
+ */
+export function estimateMinutes(exercises: RoutineExercise[]): number {
+  const seconds = exercises.reduce((acc, item) => {
+    const rest = Number(
+      getExercise(item.exerciseId)?.rest?.match(/\d+/)?.[0] ?? 75
+    );
+    return acc + item.sets * (45 + rest);
+  }, 0);
+  return Math.max(5, Math.round(seconds / 60 / 5) * 5);
+}

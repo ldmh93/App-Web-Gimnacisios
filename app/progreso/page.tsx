@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { ProgressChart } from "@/components/ProgressChart";
+import { TrainingSummary } from "@/components/TrainingSummary";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -33,7 +34,8 @@ import {
 } from "@/components/ui/select";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { generateId, STORAGE_KEYS } from "@/lib/storage";
-import type { Measurements, ProgressEntry } from "@/lib/types";
+import { computeStats, personalRecords } from "@/lib/stats";
+import type { Measurements, ProgressEntry, WorkoutSession } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 type Metric = "weight" | keyof Measurements;
@@ -71,7 +73,14 @@ export default function ProgresoPage() {
     STORAGE_KEYS.progress,
     []
   );
+  const [sessions] = useLocalStorage<WorkoutSession[]>(
+    STORAGE_KEYS.workoutSessions,
+    []
+  );
   const [form, setForm] = useState(EMPTY_FORM);
+
+  const trainingStats = useMemo(() => computeStats(sessions), [sessions]);
+  const records = useMemo(() => personalRecords(sessions), [sessions]);
   const [metric, setMetric] = useState<Metric>("weight");
 
   const sorted = useMemo(
@@ -131,6 +140,8 @@ export default function ProgresoPage() {
         title="Progreso"
         description="Registra tu peso y medidas corporales, visualiza tu evolución y compara tu punto de partida con tu presente."
       />
+
+      <TrainingSummary stats={trainingStats} records={records} />
 
       <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
         {/* ------------------------------ Registro ----------------------------- */}

@@ -4,19 +4,22 @@ import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Beef, Calculator, Flame, Scale, UserPlus } from "lucide-react";
+import { Beef, Calculator, Dumbbell, Flame, Scale, Trophy, UserPlus } from "lucide-react";
 import { StatTile } from "@/components/StatTile";
 import { TodayWorkoutCard } from "@/components/TodayWorkoutCard";
+import { WeeklyActivity } from "@/components/WeeklyActivity";
 import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useTodaySession } from "@/hooks/useTodaySession";
 import { STORAGE_KEYS } from "@/lib/storage";
+import { computeStats } from "@/lib/stats";
 import type {
   NutritionResult,
   ProgressEntry,
   UserProfile,
+  WorkoutSession,
 } from "@/lib/types";
 import { GOAL_ADJUSTMENTS } from "@/utils/calories";
 import { getPredefinedRoutine, recommendRoutine } from "@/data/routines";
@@ -61,7 +64,13 @@ export default function DashboardPage() {
     STORAGE_KEYS.progress,
     []
   );
+  const [sessions] = useLocalStorage<WorkoutSession[]>(
+    STORAGE_KEYS.workoutSessions,
+    []
+  );
   const { plan, session, startSession } = useTodaySession();
+
+  const stats = useMemo(() => computeStats(sessions), [sessions]);
 
   const suggested = useMemo(() => todaysWorkout(profile), [profile]);
 
@@ -84,12 +93,12 @@ export default function DashboardPage() {
   const inProgress = Boolean(session && !session.completed);
 
   // Una sola acción: si hay sesión en curso la continúa; si no, la crea desde
-  // el entrenamiento de hoy. En ambos casos se entrena en /rutinas.
+  // el entrenamiento de hoy. En ambos casos se entrena en /entrenar.
   const handleTrain = () => {
     if (!inProgress && workout) {
       startSession(workout.name, workout.exercises);
     }
-    router.push("/rutinas");
+    router.push("/entrenar");
   };
 
   const latestWeight =
@@ -157,6 +166,39 @@ export default function DashboardPage() {
           onTrain={handleTrain}
         />
       )}
+
+      {/* Actividad de la semana: racha y días entrenados */}
+      <div className="mt-6">
+        <WeeklyActivity stats={stats} />
+      </div>
+
+      {/* Accesos rápidos: llegar a un ejercicio en dos toques */}
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <Link
+          href="/ejercicios"
+          className="group flex flex-col gap-2 rounded-2xl border border-border/60 bg-card/60 p-4 transition-colors hover:border-primary/50 active:scale-[0.98]"
+        >
+          <span className="flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
+            <Dumbbell className="size-5" />
+          </span>
+          <span className="text-sm font-semibold">Explorar por músculo</span>
+          <span className="text-xs text-muted-foreground">
+            Toca el cuerpo y elige ejercicio
+          </span>
+        </Link>
+        <Link
+          href="/progreso"
+          className="group flex flex-col gap-2 rounded-2xl border border-border/60 bg-card/60 p-4 transition-colors hover:border-primary/50 active:scale-[0.98]"
+        >
+          <span className="flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
+            <Trophy className="size-5" />
+          </span>
+          <span className="text-sm font-semibold">Mi progreso</span>
+          <span className="text-xs text-muted-foreground">
+            {stats.total} entrenamiento{stats.total !== 1 && "s"} · récords
+          </span>
+        </Link>
+      </div>
 
       {/* Resumen nutricional: 3 datos glanceables + enlace al plan completo */}
       <section aria-label="Resumen nutricional" className="mt-6">

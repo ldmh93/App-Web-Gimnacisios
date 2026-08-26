@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -15,13 +16,15 @@ import {
   Trash2,
   UserPlus,
 } from "lucide-react";
+import { Achievements } from "@/components/Achievements";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { STORAGE_KEYS, resetLocalDataWithConfirm } from "@/lib/storage";
-import type { UserProfile } from "@/lib/types";
+import { achievements, computeStats, personalRecords } from "@/lib/stats";
+import type { UserProfile, WorkoutSession } from "@/lib/types";
 
 /** Accesos que agrupa la pestaña Perfil (identidad + secciones secundarias). */
 const LINKS: {
@@ -81,6 +84,16 @@ export default function PerfilPage() {
     STORAGE_KEYS.profile,
     null
   );
+
+  const [sessions] = useLocalStorage<WorkoutSession[]>(
+    STORAGE_KEYS.workoutSessions,
+    []
+  );
+
+  const logros = useMemo(() => {
+    const stats = computeStats(sessions);
+    return achievements(stats, personalRecords(sessions));
+  }, [sessions]);
 
   if (!hydrated) return null;
 
@@ -166,6 +179,8 @@ export default function PerfilPage() {
       </nav>
 
       {/* Ajustes */}
+      <Achievements items={logros} />
+
       <section aria-label="Ajustes" className="mt-6">
         <h2 className="mb-2 flex items-center gap-2 px-1 text-sm font-semibold text-muted-foreground">
           <Settings2 className="size-4" />

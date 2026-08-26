@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Dumbbell, Play } from "lucide-react";
+import { Clock, Dumbbell, Layers, Play } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +13,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { getExercise } from "@/data/exercises";
+import { getExercise, muscleLabel } from "@/data/exercises";
+import { estimateMinutes } from "@/lib/workout";
 import type { RoutineExercise, WorkoutSession } from "@/lib/types";
 
 interface TodayWorkoutCardProps {
@@ -31,8 +32,8 @@ interface TodayWorkoutCardProps {
 
 /**
  * Tarjeta protagonista de la Home: el entrenamiento de hoy con UNA sola acción
- * principal ("Entrenar" o "Continuar"). Sustituye al antiguo checklist paralelo
- * del Dashboard, que no llegaba a registrar una sesión real.
+ * principal ("Comenzar entrenamiento" o "Continuar"). Sustituye al antiguo
+ * checklist paralelo del Dashboard, que no llegaba a registrar una sesión real.
  */
 export function TodayWorkoutCard({
   name,
@@ -55,6 +56,16 @@ export function TodayWorkoutCard({
   const percent = totalSets > 0 ? (doneSets / totalSets) * 100 : 0;
 
   const title = inProgress && session ? session.routineName : name;
+  const minutes = estimateMinutes(exercises);
+
+  // Grupos musculares que toca la sesión, sin repetir y en orden de aparición.
+  const groups = [
+    ...new Set(
+      exercises
+        .map((item) => getExercise(item.exerciseId)?.group)
+        .filter((g): g is NonNullable<typeof g> => Boolean(g))
+    ),
+  ].slice(0, 4);
 
   return (
     <motion.section
@@ -63,22 +74,44 @@ export function TodayWorkoutCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Card className="border-primary/40">
+      <Card className="glow-primary-soft border-primary/40 bg-gradient-to-br from-primary/10 via-card to-card">
         <CardHeader>
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <CardDescription>
-                {inProgress ? "Entrenamiento en curso" : source}
-              </CardDescription>
-              <CardTitle className="mt-1 text-xl uppercase tracking-wide">
-                {title.replace("—", "·")}
-              </CardTitle>
-            </div>
-            <Badge variant="outline" className="shrink-0 gap-1.5">
-              <Dumbbell className="size-3.5" />
-              {exercises.length} ejerc.
+          <CardDescription className="text-xs font-bold uppercase tracking-widest text-primary">
+            {inProgress ? "Entrenamiento en curso" : "¿Listo para entrenar?"}
+          </CardDescription>
+          <CardTitle className="mt-1 text-2xl uppercase tracking-wide">
+            {title.replace("—", "·")}
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">{source}</p>
+
+          {/* Datos de un vistazo: duración, nº de ejercicios y músculos */}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <Badge variant="outline" className="gap-1.5">
+              <Clock className="size-3.5 text-primary" />
+              {minutes} min
+            </Badge>
+            <Badge variant="outline" className="gap-1.5">
+              <Dumbbell className="size-3.5 text-primary" />
+              {exercises.length} ejercicios
+            </Badge>
+            <Badge variant="outline" className="gap-1.5">
+              <Layers className="size-3.5 text-primary" />
+              {totalSets} series
             </Badge>
           </div>
+          {groups.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {groups.map((g) => (
+                <span
+                  key={g}
+                  className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                >
+                  {muscleLabel(g)}
+                </span>
+              ))}
+            </div>
+          )}
+
           {inProgress && (
             <div className="mt-3 flex items-center gap-3">
               <Progress value={percent} className="h-2.5" />
@@ -109,19 +142,17 @@ export function TodayWorkoutCard({
             })}
           </ul>
 
-          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
-            <Button
-              size="lg"
-              className="glow-primary-soft flex-1 font-semibold"
-              onClick={onTrain}
-            >
-              <Play className="size-5" />
-              {inProgress ? "Continuar entrenamiento" : "Entrenar"}
-            </Button>
-            <Button asChild variant="ghost" className="sm:w-auto">
-              <Link href="/rutinas#predefinidas">Ver otras rutinas</Link>
-            </Button>
-          </div>
+          <Button
+            size="lg"
+            className="glow-primary-soft mt-4 h-14 w-full text-base font-bold uppercase tracking-wide"
+            onClick={onTrain}
+          >
+            <Play className="size-5" />
+            {inProgress ? "Continuar entrenamiento" : "Comenzar entrenamiento"}
+          </Button>
+          <Button asChild variant="ghost" className="mt-2 w-full">
+            <Link href="/rutinas#predefinidas">Ver otras rutinas</Link>
+          </Button>
         </CardContent>
       </Card>
     </motion.section>
