@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { CalendarDays, Dumbbell, History, Play, Plus, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
@@ -48,6 +49,7 @@ const LEVEL_BADGE: Record<Level, string> = {
 };
 
 export default function RutinasPage() {
+  const router = useRouter();
   const [activeWorkout, setActiveWorkout, hydrated] =
     useLocalStorage<WorkoutSession | null>(STORAGE_KEYS.activeWorkout, null);
   const [customRoutines, setCustomRoutines] = useLocalStorage<CustomRoutine[]>(
@@ -62,6 +64,8 @@ export default function RutinasPage() {
 
   const startWorkout = (name: string, exercises: RoutineExercise[]) => {
     setActiveWorkout(buildSession(name, exercises));
+    // El registro serie a serie vive en el modo entrenamiento a pantalla completa.
+    router.push("/entrenar");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 

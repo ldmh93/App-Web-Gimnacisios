@@ -7,7 +7,9 @@ import {
   Building2,
   ChevronRight,
   GraduationCap,
+  ClipboardList,
   LineChart,
+  UtensilsCrossed,
   Pill,
   Settings2,
   Trash2,
@@ -41,6 +43,18 @@ const LINKS: {
     label: "Mi progreso",
     hint: "Peso, medidas y evolución",
     icon: LineChart,
+  },
+  {
+    href: "/rutinas",
+    label: "Mis rutinas",
+    hint: "Predefinidas, propias e historial",
+    icon: ClipboardList,
+  },
+  {
+    href: "/nutricion",
+    label: "Nutrición",
+    hint: "Calculadora de macros y dietas",
+    icon: UtensilsCrossed,
   },
   {
     href: "/gimnasio",

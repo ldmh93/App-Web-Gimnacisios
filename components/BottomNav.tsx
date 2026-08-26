@@ -3,21 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import {
-  ClipboardList,
-  Dumbbell,
-  Home,
-  UserRound,
-  UtensilsCrossed,
-} from "lucide-react";
+import { Dumbbell, Home, LineChart, PlayCircle, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /** Accesos principales de la barra inferior (solo móvil/tablet). */
 const ITEMS = [
   { href: "/dashboard", label: "Hoy", icon: Home },
+  { href: "/entrenar", label: "Entrenar", icon: PlayCircle },
   { href: "/ejercicios", label: "Ejercicios", icon: Dumbbell },
-  { href: "/rutinas", label: "Rutinas", icon: ClipboardList },
-  { href: "/nutricion", label: "Nutrición", icon: UtensilsCrossed },
+  { href: "/progreso", label: "Progreso", icon: LineChart },
   { href: "/perfil", label: "Perfil", icon: UserRound },
 ];
 

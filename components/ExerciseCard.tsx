@@ -8,6 +8,7 @@ import {
   Check,
   CheckCircle2,
   Dumbbell,
+  Heart,
   Lightbulb,
   Plus,
   Repeat2,
@@ -121,6 +122,9 @@ interface ExerciseCardProps {
   /** Si se proporcionan, la ficha muestra el botón "Agregar a mi rutina de hoy". */
   inTodayRoutine?: boolean;
   onToggleToday?: (exercise: Exercise) => void;
+  /** Si se proporcionan, la tarjeta muestra el corazón de favorito. */
+  isFavorite?: boolean;
+  onToggleFavorite?: (id: string) => void;
 }
 
 export function ExerciseCard({
@@ -128,8 +132,11 @@ export function ExerciseCard({
   index = 0,
   inTodayRoutine = false,
   onToggleToday,
+  isFavorite = false,
+  onToggleFavorite,
 }: ExerciseCardProps) {
   return (
+    <div className="relative">
     <Dialog>
       <DialogTrigger asChild>
         <motion.button
@@ -156,7 +163,7 @@ export function ExerciseCard({
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute right-3 top-3 z-10 flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md"
+                  className="absolute bottom-2 right-2 z-10 flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md"
                   title="En tu rutina de hoy"
                 >
                   <Check className="size-4" strokeWidth={3} />
@@ -290,5 +297,28 @@ export function ExerciseCard({
         </div>
       </DialogContent>
     </Dialog>
+
+      {/* Favorito: fuera del DialogTrigger para no anidar botones */}
+      {onToggleFavorite && (
+        <button
+          type="button"
+          onClick={() => onToggleFavorite(exercise.id)}
+          aria-label={
+            isFavorite
+              ? `Quitar ${exercise.name} de favoritos`
+              : `Guardar ${exercise.name} en favoritos`
+          }
+          aria-pressed={isFavorite}
+          className={cn(
+            "absolute right-2 top-2 z-20 flex size-9 items-center justify-center rounded-full backdrop-blur-md transition-all active:scale-90",
+            isFavorite
+              ? "bg-primary/90 text-primary-foreground"
+              : "bg-background/70 text-muted-foreground hover:text-primary"
+          )}
+        >
+          <Heart className={cn("size-[18px]", isFavorite && "fill-current")} />
+        </button>
+      )}
+    </div>
   );
 }

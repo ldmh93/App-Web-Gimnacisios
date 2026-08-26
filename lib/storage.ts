@@ -12,6 +12,9 @@ export const STORAGE_KEYS = {
   activeWorkout: "fitcore:active-workout",
   progress: "fitcore:progress",
   todayRoutine: "fitcore:today-routine",
+  favorites: "fitcore:favorites",
+  achievements: "fitcore:achievements",
+  restSeconds: "fitcore:rest-seconds",
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

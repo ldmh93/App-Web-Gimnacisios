@@ -37,6 +37,7 @@ import { cn } from "@/lib/utils";
  */
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Hoy" },
+  { href: "/entrenar", label: "Entrenar" },
   { href: "/ejercicios", label: "Ejercicios" },
   { href: "/rutinas", label: "Rutinas" },
   { href: "/nutricion", label: "Nutrición" },
