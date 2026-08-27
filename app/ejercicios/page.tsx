@@ -144,7 +144,7 @@ export default function EjerciciosPage() {
 
       {/* ---------------------------- Mapa muscular --------------------------- */}
       <section className="mb-8 grid gap-6 lg:grid-cols-[minmax(0,340px)_1fr] lg:items-start">
-        <div className="rounded-3xl border border-border/60 bg-card/60 p-4 backdrop-blur-xl">
+        <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-[#17161c] to-[#0c0c10] p-4 shadow-xl">
           <BodyMap
             view={view}
             onViewChange={setView}

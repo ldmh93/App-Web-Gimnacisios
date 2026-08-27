@@ -3,75 +3,126 @@ import type { BodyRegionId, BodyView } from "./muscleMap";
 /**
  * Geometría del cuerpo interactivo.
  *
+ * El dibujo lo pone una ilustración anatómica real (public/body/*.png, con el
+ * fondo recortado); este módulo solo define las ZONAS TOCABLES trazadas encima,
+ * en el sistema de coordenadas de cada imagen.
+ *
  * Convenciones:
- * - Lienzo 220 x 470, figura centrada en x = 110, proporción ~7,5 cabezas.
- * - Los músculos pares se dibujan SOLO en su mitad izquierda; el componente
- *   pinta la copia derecha con `matrix(-1 0 0 1 220 0)`. La simetría queda
- *   garantizada y hay la mitad de trazados que mantener.
+ * - Cada vista tiene su propio lienzo y su eje de simetría (`axis`).
+ * - Los músculos pares se trazan SOLO en su mitad izquierda; el componente
+ *   pinta la copia derecha reflejándolos sobre `axis`. Así la simetría es
+ *   exacta y hay la mitad de trazados que mantener.
  * - `paired: false` marca las zonas centrales (abdomen, trapecio, lumbares),
- *   que ya cruzan el eje y no deben espejarse.
- * - BODY_BASE es una silueta continua que se pinta DEBAJO de los músculos: así
- *   las juntas entre grupos musculares muestran cuerpo y no fondo.
+ *   que ya cruzan el eje y no deben reflejarse.
  */
 
-export const BODY_CANVAS = { width: 220, height: 470 } as const;
+export interface BodyImage {
+  src: string;
+  /** Silueta blanca sobre negro: recorta el resaltado al contorno del cuerpo. */
+  mask: string;
+  width: number;
+  height: number;
+  /** Eje vertical de simetría, en coordenadas de la imagen. */
+  axis: number;
+}
+
+export const BODY_IMAGE: Record<BodyView, BodyImage> = {
+  front: {
+    src: "/body/front.webp",
+    mask: "/body/front-mask.png",
+    width: 820,
+    height: 1677,
+    axis: 410,
+  },
+  back: {
+    src: "/body/back.webp",
+    mask: "/body/back-mask.png",
+    width: 820,
+    height: 1609,
+    axis: 410,
+  },
+};
 
 export interface RegionShape {
   d: string;
   paired: boolean;
 }
 
-/** Silueta continua no interactiva (cabeza, cuello, tronco, extremidades). */
-export const BODY_BASE: Record<BodyView, RegionShape[]> = {
-  front: [
-    { d: "M110,16 C98,16 90,27 90,42 C90,57 98,68 110,68 L110,16 Z", paired: true },
-    { d: "M110,62 L100,65 L98,86 L110,88 Z", paired: true },
-    { d: "M110,84 L86,88 C72,94 64,106 63,120 C62,138 70,158 76,178 C79,194 82,206 87,214 L110,220 Z", paired: true },
-    { d: "M63,105 C52,115 46,137 45,163 C45,178 57,181 62,168 C66,148 68,122 69,107 Z", paired: true },
-    { d: "M45,165 C41,189 38,212 38,234 C40,247 53,248 55,235 C57,213 61,187 63,166 Z", paired: true },
-    { d: "M38,236 C32,247 32,265 39,274 C48,278 55,271 55,259 C55,249 51,239 48,236 Z", paired: true },
-    { d: "M110,220 L84,215 C75,244 73,288 79,330 L108,334 Z", paired: true },
-    { d: "M79,328 L107,332 L104,410 L85,410 Z", paired: true },
-    { d: "M85,408 L104,408 L109,426 L78,426 Z", paired: true },
-  ],
-  back: [
-    { d: "M110,16 C98,16 90,27 90,42 C90,57 98,68 110,68 L110,16 Z", paired: true },
-    { d: "M110,62 L100,65 L98,86 L110,88 Z", paired: true },
-    { d: "M110,84 L86,88 C72,94 64,106 63,120 C62,138 70,158 76,178 C79,194 82,206 87,214 L110,220 Z", paired: true },
-    { d: "M63,105 C52,115 46,137 45,163 C45,178 57,181 62,168 C66,148 68,122 69,107 Z", paired: true },
-    { d: "M45,165 C41,189 38,212 38,234 C40,247 53,248 55,235 C57,213 61,187 63,166 Z", paired: true },
-    { d: "M38,236 C32,247 32,265 39,274 C48,278 55,271 55,259 C55,249 51,239 48,236 Z", paired: true },
-    { d: "M110,220 L84,215 C75,244 73,288 79,330 L108,334 Z", paired: true },
-    { d: "M79,328 L107,332 L104,410 L85,410 Z", paired: true },
-    { d: "M85,408 L104,408 L109,426 L78,426 Z", paired: true },
-  ],
-};
+/** Transformación que refleja un músculo par sobre el eje de su vista. */
+export function mirrorTransform(axis: number): string {
+  return `matrix(-1 0 0 1 ${axis * 2} 0)`;
+}
 
 export const REGION_SHAPES: Record<
   BodyView,
   Partial<Record<BodyRegionId, RegionShape>>
 > = {
   front: {
-    hombro: { d: "M86,88 C72,94 64,106 63,121 C70,129 82,125 88,113 C91,103 89,93 86,88 Z", paired: true },
-    pecho: { d: "M110,92 L88,97 C82,110 82,126 88,138 C97,144 106,143 110,139 Z", paired: true },
-    biceps: { d: "M64,123 C56,133 52,150 51,166 C57,175 66,172 69,161 C72,146 70,132 69,122 Z", paired: true },
-    antebrazo: { d: "M51,168 C47,189 44,210 44,230 C50,238 58,234 58,224 C60,204 63,185 65,169 Z", paired: true },
-    abdomen: { d: "M110,140 L97,144 L95,170 L98,198 L110,205 L122,198 L125,170 L123,144 Z", paired: false },
-    oblicuos: { d: "M95,146 L88,152 C86,168 89,188 95,199 L97,196 Z", paired: true },
-    cuadriceps: { d: "M110,222 L85,218 C78,246 77,286 83,320 C94,326 105,322 107,310 Z", paired: true },
+    hombro: {
+      d: "M248,305 C206,296 164,326 148,378 C140,416 156,448 188,450 C216,436 238,398 248,350 Z",
+      paired: true,
+    },
+    pecho: {
+      d: "M405,310 L282,300 C250,321 237,371 245,416 C266,451 331,463 405,451 Z",
+      paired: true,
+    },
+    biceps: {
+      d: "M212,424 C172,434 138,468 124,514 C118,550 137,574 164,569 C190,546 207,490 213,441 Z",
+      paired: true,
+    },
+    antebrazo: {
+      d: "M164,572 C126,596 92,652 74,720 C64,768 70,814 93,828 C121,822 144,776 158,714 C172,652 174,604 174,576 Z",
+      paired: true,
+    },
+    abdomen: {
+      d: "M326,458 L494,458 C502,542 501,640 487,718 C468,776 440,800 410,803 C381,800 352,776 333,718 C319,640 318,542 326,458 Z",
+      paired: false,
+    },
+    oblicuos: {
+      d: "M322,478 C301,486 283,514 277,572 C273,648 285,724 307,784 L322,776 C312,700 309,584 322,478 Z",
+      paired: true,
+    },
+    cuadriceps: {
+      d: "M336,812 C297,806 258,830 236,882 C216,942 214,1030 230,1098 C246,1138 287,1146 307,1116 C319,1044 330,928 336,856 Z",
+      paired: true,
+    },
   },
   back: {
-    trapecio: { d: "M110,70 L94,78 L83,96 L92,128 L110,134 L128,128 L137,96 L126,78 Z", paired: false },
-    hombro: { d: "M86,88 C72,94 64,106 63,121 C70,129 82,125 88,113 C91,103 89,93 86,88 Z", paired: true },
-    triceps: { d: "M64,123 C56,133 52,150 51,166 C57,175 66,172 69,161 C72,146 70,132 69,122 Z", paired: true },
-    antebrazo: { d: "M51,168 C47,189 44,210 44,230 C50,238 58,234 58,224 C60,204 63,185 65,169 Z", paired: true },
-    dorsal: { d: "M110,134 L91,130 C80,142 76,170 84,198 L110,203 Z", paired: true },
-    lumbar: { d: "M110,201 L96,198 L91,218 L110,224 L129,218 L124,198 Z", paired: false },
-    gluteo: { d: "M110,224 L88,220 C78,229 76,248 86,261 C98,267 108,262 110,251 Z", paired: true },
-    femoral: { d: "M110,263 L86,260 C79,284 78,310 85,330 C96,335 105,330 107,318 Z", paired: true },
-    gemelos: { d: "M107,334 L85,331 C78,346 78,370 86,385 C98,389 104,382 104,371 Z", paired: true },
+    trapecio: {
+      d: "M410,190 L376,204 C338,232 300,272 280,312 C310,352 350,410 384,442 L410,448 L436,442 C470,410 510,352 540,312 C520,272 482,232 444,204 Z",
+      paired: false,
+    },
+    hombro: {
+      d: "M256,306 C212,298 172,328 156,378 C148,414 164,444 194,446 C222,432 245,394 256,346 Z",
+      paired: true,
+    },
+    triceps: {
+      d: "M210,425 C172,437 138,472 124,516 C118,552 137,576 164,571 C190,548 206,494 212,443 Z",
+      paired: true,
+    },
+    antebrazo: {
+      d: "M164,575 C126,600 92,656 74,724 C64,772 70,818 93,832 C121,826 144,780 158,718 C172,656 174,606 174,578 Z",
+      paired: true,
+    },
+    dorsal: {
+      d: "M400,410 C352,418 308,436 276,474 C252,508 245,552 258,588 C288,626 344,642 400,630 Z",
+      paired: true,
+    },
+    lumbar: {
+      d: "M340,600 C364,591 456,591 480,600 C476,646 462,678 440,692 L382,692 C360,678 345,646 340,600 Z",
+      paired: false,
+    },
+    gluteo: {
+      d: "M402,706 C354,698 306,708 280,744 C258,784 258,838 282,868 C318,894 374,890 402,868 Z",
+      paired: true,
+    },
+    femoral: {
+      d: "M334,900 C296,895 258,918 238,964 C219,1018 219,1094 237,1144 C259,1176 298,1171 316,1136 C329,1068 336,980 338,926 Z",
+      paired: true,
+    },
+    gemelos: {
+      d: "M310,1186 C275,1181 243,1204 228,1249 C219,1303 228,1357 250,1384 C281,1397 302,1375 306,1330 C310,1276 312,1222 312,1195 Z",
+      paired: true,
+    },
   },
 };
-
-/** Transformación que genera la copia derecha de un músculo par. */
-export const MIRROR = "matrix(-1 0 0 1 220 0)";
