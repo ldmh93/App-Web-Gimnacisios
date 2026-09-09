@@ -42,14 +42,19 @@ export interface BrandConfig {
 }
 
 /**
- * Identidad por defecto: el producto se llama FIT CORE y arranca con el
- * emblema que ya estaba en el proyecto.
+ * Identidad por defecto del producto.
+ *
+ * Las imágenes son propias de FIT CORE. Antes se reutilizaban las de MORA'S
+ * GYM, pero el logotipo grande lleva ESE nombre escrito dentro y chocaba con
+ * el "FIT CORE" del header. Las de MORA'S siguen en /brand/mark.png y
+ * /brand/logo.png: se pueden volver a poner desde Configuración cuando se
+ * presente la app a ese gimnasio.
  */
 export const DEFAULT_BRAND: BrandConfig = {
   name: "FIT",
   nameAccent: "CORE",
-  mark: "/brand/mark.png",
-  logo: "/brand/logo.png",
+  mark: "/brand/fitcore-mark.png",
+  logo: "/brand/fitcore-logo.png",
   splash: "",
   tagline: "Transforma tu cuerpo. Construye tu mejor versión.",
   primaryColor: "",
