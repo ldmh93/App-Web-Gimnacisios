@@ -7,10 +7,10 @@ import { brandName } from "@/lib/brand";
 /**
  * Pantalla de bienvenida.
  *
- * No introduce esperas artificiales: quien decide cuándo desaparece es
- * AppShell, en cuanto el estado de la aplicación está listo. Solo se garantiza
- * un mínimo muy corto para que no dé un fogonazo, y un máximo de 2 s para que
- * nunca bloquee al usuario si algo va lento.
+ * Quien decide cuándo desaparece es AppShell. Se mantiene una duración fija
+ * de presentación aunque la aplicación ya esté lista —es la carta de
+ * presentación de la marca, no un indicador de carga— con un tope de
+ * seguridad por si algo se atasca.
  */
 export function SplashScreen() {
   const { brand } = useApp();

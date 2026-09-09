@@ -12,10 +12,16 @@ import { BottomNav } from "@/components/BottomNav";
 /** Rutas visibles sin iniciar sesión. */
 const PUBLIC_ROUTES = ["/", "/login"];
 
-/** Mínimo visible para que la bienvenida no dé un fogonazo. */
-const SPLASH_MIN_MS = 450;
-/** Tope duro: pase lo que pase, a los 2 s se entra a la aplicación. */
-const SPLASH_MAX_MS = 2000;
+/**
+ * Duración de la presentación de marca.
+ *
+ * Es un mínimo deliberado: aunque la aplicación esté lista antes, la pantalla
+ * se mantiene los 3,5 s completos porque su función aquí es de presentación,
+ * no de carga.
+ */
+const SPLASH_MIN_MS = 3500;
+/** Tope duro: si algo se atasca, a los 5 s se entra igualmente. */
+const SPLASH_MAX_MS = 5000;
 
 function isPublic(pathname: string): boolean {
   return PUBLIC_ROUTES.includes(pathname);
@@ -56,8 +62,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Se cierra en cuanto la app está lista (o al agotar el tope), nunca antes
-  // del mínimo: así no se espera de más ni se parpadea de menos.
+  // Se cierra al cumplirse el mínimo de presentación (o al agotar el tope si
+  // algo se atasca). Si la app tarda más que ese mínimo, se espera a que esté
+  // lista para no entrar a una pantalla a medio montar.
   useEffect(() => {
     if (splashDone) return;
     if ((ready && minElapsed) || timedOut) {
