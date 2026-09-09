@@ -1,5 +1,5 @@
 /**
- * Capa de persistencia local de FITCORE.
+ * Capa de persistencia local de FIT CORE.
  * Hoy: LocalStorage. Mañana: sustituir estas funciones por llamadas a la API
  * (PostgreSQL + Prisma) sin tocar los componentes que las consumen.
  */
@@ -15,7 +15,34 @@ export const STORAGE_KEYS = {
   favorites: "fitcore:favorites",
   achievements: "fitcore:achievements",
   restSeconds: "fitcore:rest-seconds",
+  /* --- Configuración e identidad (administrables desde /admin) --- */
+  brand: "fitcore:brand",
+  accounts: "fitcore:accounts",
+  authSession: "fitcore:auth-session",
+  gymPhotos: "fitcore:gym-photos",
+  gymInfo: "fitcore:gym-info",
+  nutritionist: "fitcore:nutritionist",
+  notifications: "fitcore:notifications",
+  readNotifications: "fitcore:read-notifications",
 } as const;
+
+/**
+ * Claves que contienen datos DEL USUARIO (su entrenamiento y su perfil).
+ * Se separan de la configuración del gimnasio para que "borrar mis datos" no
+ * destruya las cuentas ni la identidad de marca, que son del administrador.
+ */
+export const USER_DATA_KEYS = [
+  STORAGE_KEYS.profile,
+  STORAGE_KEYS.nutrition,
+  STORAGE_KEYS.customRoutines,
+  STORAGE_KEYS.workoutSessions,
+  STORAGE_KEYS.activeWorkout,
+  STORAGE_KEYS.progress,
+  STORAGE_KEYS.todayRoutine,
+  STORAGE_KEYS.favorites,
+  STORAGE_KEYS.achievements,
+  STORAGE_KEYS.readNotifications,
+] as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
 
@@ -54,7 +81,7 @@ export function resetLocalDataWithConfirm(): void {
     "¿Borrar todos los datos guardados (rutinas, progreso, perfil)? Esta acción no se puede deshacer."
   );
   if (!ok) return;
-  Object.values(STORAGE_KEYS).forEach(removeFromStorage);
+  USER_DATA_KEYS.forEach(removeFromStorage);
   window.location.reload();
 }
 

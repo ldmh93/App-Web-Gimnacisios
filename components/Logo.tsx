@@ -1,12 +1,20 @@
+"use client";
+
 import Link from "next/link";
-import Image from "next/image";
+import { useApp } from "@/components/AppProvider";
+import { brandName } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 /**
- * Marca MORA'S GYM.
- * Isotipo (emblema): public/brand/mark.png — corona, círculo y figura.
- * Logotipo completo (con lettering): public/brand/logo.png.
- * Para reemplazarlos basta con sustituir esos archivos.
+ * Marca de la aplicación.
+ *
+ * El nombre y las imágenes salen de la configuración editable desde /admin
+ * (lib/brand.ts), no de constantes en el código: así el mismo producto puede
+ * presentarse a distintos gimnasios con su identidad.
+ *
+ * Se usa <img> y no next/image a propósito, porque el logotipo puede ser un
+ * data URL subido por el administrador y next/image exige rutas conocidas en
+ * tiempo de compilación.
  */
 
 interface LogoMarkProps {
@@ -14,18 +22,18 @@ interface LogoMarkProps {
 }
 
 export function LogoMark({ className }: LogoMarkProps) {
+  const { brand } = useApp();
   return (
     <span
       className={cn("relative inline-block size-9 shrink-0", className)}
       aria-hidden="true"
     >
-      <Image
-        src="/brand/mark.png"
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={brand.mark}
         alt=""
-        fill
-        sizes="192px"
-        className="object-contain"
-        priority
+        className="size-full object-contain"
+        draggable={false}
       />
     </span>
   );
@@ -33,26 +41,19 @@ export function LogoMark({ className }: LogoMarkProps) {
 
 interface LogoFullProps {
   className?: string;
-  /** Texto alternativo; vacío si el logo es decorativo junto a un título. */
   alt?: string;
-  priority?: boolean;
 }
 
-/** Logotipo completo con el lettering MORA'S GYM. Para usos grandes (portada). */
-export function LogoFull({
-  className,
-  alt = "MORA'S GYM",
-  priority = false,
-}: LogoFullProps) {
+/** Logotipo completo con lettering. Para usos grandes (portada, bienvenida). */
+export function LogoFull({ className, alt }: LogoFullProps) {
+  const { brand } = useApp();
   return (
-    <Image
-      src="/brand/logo.png"
-      alt={alt}
-      width={1200}
-      height={1312}
-      sizes="(max-width: 640px) 60vw, 420px"
-      priority={priority}
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={brand.logo}
+      alt={alt ?? brandName(brand)}
       className={cn("h-auto w-auto object-contain", className)}
+      draggable={false}
     />
   );
 }
@@ -72,6 +73,8 @@ export function Logo({
   showText = true,
   href = "/",
 }: LogoProps) {
+  const { brand } = useApp();
+
   const content = (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
       <LogoMark className={markClassName} />
@@ -82,7 +85,10 @@ export function Logo({
             textClassName
           )}
         >
-          MORA&apos;S <span className="text-primary">GYM</span>
+          {brand.name}
+          {brand.nameAccent && (
+            <span className="text-primary"> {brand.nameAccent}</span>
+          )}
         </span>
       )}
     </span>
@@ -91,7 +97,11 @@ export function Logo({
   if (!href) return content;
 
   return (
-    <Link href={href} aria-label="MORA'S GYM — inicio" className="shrink-0">
+    <Link
+      href={href}
+      aria-label={`${brandName(brand)} — inicio`}
+      className="shrink-0"
+    >
       {content}
     </Link>
   );

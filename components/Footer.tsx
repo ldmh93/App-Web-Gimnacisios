@@ -3,6 +3,8 @@
 import { usePathname } from "next/navigation";
 import { Phone } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { useApp } from "@/components/AppProvider";
+import { brandName } from "@/lib/brand";
 
 /**
  * Pie de página con el crédito del creador. Solo se muestra en pantallas
@@ -13,6 +15,7 @@ const FOOTER_ROUTES = ["/", "/gimnasio", "/perfil"];
 
 export function Footer() {
   const pathname = usePathname();
+  const { brand } = useApp();
   if (!FOOTER_ROUTES.includes(pathname)) return null;
 
   return (
@@ -32,7 +35,7 @@ export function Footer() {
           </a>
         </div>
         <p className="text-[11px] text-muted-foreground/70">
-          © {new Date().getFullYear()} MORA&apos;S GYM · Todos los derechos
+          © {new Date().getFullYear()} {brandName(brand)} · Todos los derechos
           reservados
         </p>
       </div>

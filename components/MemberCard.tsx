@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import { LogoMark } from "@/components/Logo";
+import { useApp } from "@/components/AppProvider";
+import { brandName } from "@/lib/brand";
 import { UserAvatar } from "@/components/UserAvatar";
 import type { UserProfile } from "@/lib/types";
 
@@ -58,6 +60,7 @@ function FakeQR({ seed }: { seed: string }) {
 }
 
 export function MemberCard({ profile }: { profile: UserProfile }) {
+  const { brand } = useApp();
   const since = profile.memberSince
     ? new Date(profile.memberSince + "T00:00:00").toLocaleDateString("es", {
         month: "short",
@@ -130,7 +133,7 @@ export function MemberCard({ profile }: { profile: UserProfile }) {
       </div>
 
       <p className="relative mt-5 text-center text-[10px] uppercase tracking-widest text-white/40">
-        MORA&apos;S GYM · Presenta este carnet en recepción
+        {brandName(brand)} · Presenta este carnet en recepción
       </p>
     </motion.div>
   );

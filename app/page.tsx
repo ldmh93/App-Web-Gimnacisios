@@ -130,7 +130,7 @@ export default function LandingPage() {
                 transition={{ type: "spring", stiffness: 300, damping: 18 }}
                 className="cursor-pointer drop-shadow-[0_10px_30px_rgba(225,29,46,0.45)]"
               >
-                <LogoFull priority className="h-44 sm:h-56" />
+                <LogoFull className="h-44 sm:h-56" />
               </motion.div>
             </motion.div>
           </motion.div>
