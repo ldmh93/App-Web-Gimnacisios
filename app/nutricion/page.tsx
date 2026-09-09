@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Beef, Calculator, Droplets, Flame, HeartPulse, Wheat } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { NutritionistCard } from "@/components/NutritionistCard";
 import { BodyDataFields } from "@/components/BodyDataFields";
 import { DietCard } from "@/components/DietCard";
 import { Button } from "@/components/ui/button";
@@ -109,8 +110,11 @@ export default function NutricionPage() {
       <PageHeader
         eyebrow="Nutrición"
         title="Calculadora y dietas"
-        description="Calcula tus calorías y macronutrientes según tu cuerpo y objetivo, y elige una de las 10 dietas completas."
+        description="Consulta con el nutriólogo del gimnasio, calcula tus calorías y macronutrientes, y elige una de las 10 dietas completas."
       />
+
+      {/* Profesional del gimnasio: primero la persona, luego las herramientas */}
+      <NutritionistCard />
 
       {/* ----------------------------- Calculadora ----------------------------- */}
       <section aria-label="Calculadora corporal" className="grid gap-6 lg:grid-cols-2">

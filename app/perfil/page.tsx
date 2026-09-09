@@ -9,7 +9,6 @@ import {
   ChevronRight,
   GraduationCap,
   ClipboardList,
-  LineChart,
   UtensilsCrossed,
   Pill,
   Settings2,
@@ -17,6 +16,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { Achievements } from "@/components/Achievements";
+import { NotificationsCard } from "@/components/NotificationsCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
@@ -40,12 +40,6 @@ const LINKS: {
     hint: "Tu credencial digital",
     icon: BadgeCheck,
     requiresProfile: true,
-  },
-  {
-    href: "/progreso",
-    label: "Mi progreso",
-    hint: "Peso, medidas y evolución",
-    icon: LineChart,
   },
   {
     href: "/rutinas",
@@ -179,6 +173,8 @@ export default function PerfilPage() {
       </nav>
 
       {/* Ajustes */}
+      <NotificationsCard />
+
       <Achievements items={logros} />
 
       <section aria-label="Ajustes" className="mt-6">

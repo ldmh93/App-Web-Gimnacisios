@@ -93,8 +93,10 @@ export default function LandingPage() {
   // Evita el parpadeo de la landing mientras se redirige a un socio existente.
   if (hydrated && profile) return null;
 
-  // Si aún no hay perfil, el botón principal lleva a crear la cuenta.
-  const startHref = "/bienvenido";
+  // Con sesión obligatoria, crear cuenta empieza en el acceso; desde ahí se
+  // pasa a completar el perfil. Antes apuntaba directo a /bienvenido, que hoy
+  // está protegido y provocaría un rebote por la guarda.
+  const startHref = "/login";
   const startLabel = "Crear mi cuenta";
 
   return (

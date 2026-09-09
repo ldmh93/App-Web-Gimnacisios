@@ -4,15 +4,16 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { Camera, ChevronLeft, ChevronRight } from "lucide-react";
+import { visiblePhotos } from "@/lib/gymContent";
 import { cn } from "@/lib/utils";
 
 /**
  * Carrusel de fotos del gimnasio.
- * Convención: coloca las fotos en public/gym/ nombradas foto-1.jpg,
- * foto-2.jpg, ... (hasta MAX_PHOTOS). El carrusel detecta automáticamente
- * cuáles existen; si no hay ninguna, muestra un aviso discreto.
+ *
+ * Las fotos y su orden salen de la galería administrable (/admin/gimnasio).
+ * Se mantiene la comprobación de carga que ya existía: las rutas de public/
+ * pueden no estar, y así una foto borrada del disco no rompe el carrusel.
  */
-const MAX_PHOTOS = 12;
 const AUTOPLAY_MS = 4500;
 
 export function GymCarousel() {
@@ -24,10 +25,7 @@ export function GymCarousel() {
   // Detecta qué fotos existen probando su carga.
   useEffect(() => {
     let cancelled = false;
-    const candidates = Array.from(
-      { length: MAX_PHOTOS },
-      (_, i) => `/gym/foto-${i + 1}.jpg`
-    );
+    const candidates = visiblePhotos().map((p) => p.src);
     Promise.all(
       candidates.map(
         (src) =>
@@ -74,8 +72,7 @@ export function GymCarousel() {
           Galería del gimnasio
         </p>
         <p className="max-w-xs text-xs text-muted-foreground/70">
-          Agrega tus fotos como <code>foto-1.jpg</code>, <code>foto-2.jpg</code>…
-          en la carpeta <code>public/gym/</code> y aparecerán aquí.
+          Súbelas desde el panel de administración, en Gimnasio → Fotografías.
         </p>
       </div>
     );

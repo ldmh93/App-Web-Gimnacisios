@@ -4,28 +4,40 @@ import { motion } from "framer-motion";
 import {
   Check,
   Clock,
+  History,
   Mail,
   MapPin,
   MessageCircle,
   Music,
   Phone,
+  Sparkles,
   Star,
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { GymCarousel } from "@/components/GymCarousel";
 import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   GYM_CLASSES,
-  GYM_INFO,
   GYM_PLANS,
   GYM_SCHEDULE,
   GYM_STAFF,
   whatsappLink,
 } from "@/data/gym";
+import { loadGymInfo, type EditableGymInfo } from "@/lib/gymContent";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export default function GimnasioPage() {
+  // La ficha del gimnasio es editable desde /admin; si nunca se ha tocado,
+  // loadGymInfo devuelve exactamente los valores de data/gym.ts.
+  const [info, setInfo] = useState<EditableGymInfo | null>(null);
+  useEffect(() => setInfo(loadGymInfo()), []);
+  if (!info) return null;
+
+  const GYM_INFO = info;
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
       <PageHeader
@@ -33,6 +45,41 @@ export default function GimnasioPage() {
         title={GYM_INFO.name}
         description={GYM_INFO.slogan}
       />
+
+      {/* Conoce el gimnasio: galería administrable, historia y filosofía */}
+      <section aria-label="Conoce el gimnasio" className="mb-12">
+        <GymCarousel />
+        {(info.history || info.philosophy) && (
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {info.history && (
+              <Card>
+                <CardContent className="pt-6">
+                  <h2 className="flex items-center gap-2 text-lg font-bold">
+                    <History className="size-5 text-primary" />
+                    Nuestra historia
+                  </h2>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {info.history}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+            {info.philosophy && (
+              <Card>
+                <CardContent className="pt-6">
+                  <h2 className="flex items-center gap-2 text-lg font-bold">
+                    <Sparkles className="size-5 text-primary" />
+                    Cómo entrenamos
+                  </h2>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {info.philosophy}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
+      </section>
 
       {/* Planes de membresía */}
       <section aria-label="Planes de membresía">

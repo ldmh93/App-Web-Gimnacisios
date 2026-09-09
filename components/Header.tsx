@@ -1,19 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   BadgeCheck,
-  Building2,
-  GraduationCap,
-  Pill,
+  LogOut,
   Settings,
+  ShieldCheck,
   Trash2,
   UserPlus,
   UserRound,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { useApp } from "@/components/AppProvider";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
@@ -46,6 +46,14 @@ const NAV_ITEMS = [
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { isAdmin, signOut } = useApp();
+
+  const handleSignOut = () => {
+    signOut();
+    router.replace("/login");
+  };
+
   const [profile, , profileHydrated] = useLocalStorage<UserProfile | null>(
     STORAGE_KEYS.profile,
     null
@@ -183,26 +191,22 @@ export function Header() {
                     </DropdownMenuItem>
                   </>
                 )}
+                {isAdmin && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin">
+                        <ShieldCheck className="size-4" />
+                        Panel de administración
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/suplementos">
-                    <Pill className="size-4" />
-                    Suplementos
-                  </Link>
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut className="size-4" />
+                  Cerrar sesión
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/gimnasio">
-                    <Building2 className="size-4" />
-                    El gimnasio
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/educacion">
-                    <GraduationCap className="size-4" />
-                    Educación fitness
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   variant="destructive"
                   onClick={resetLocalDataWithConfirm}
