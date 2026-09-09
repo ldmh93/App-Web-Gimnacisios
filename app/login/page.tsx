@@ -5,12 +5,11 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Eye, EyeOff, Loader2, LogIn, ShieldCheck, UserPlus } from "lucide-react";
 import { useApp } from "@/components/AppProvider";
-import { LogoMark } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DEMO_ADMIN, login, register, startSession } from "@/lib/auth";
-import { brandName } from "@/lib/brand";
+import { brandName, splashImage } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 type Mode = "entrar" | "crear";
@@ -87,7 +86,12 @@ export default function LoginPage() {
         className="relative mx-auto w-full max-w-sm"
       >
         <div className="flex flex-col items-center text-center">
-          <LogoMark className="size-20" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={splashImage(brand)}
+            alt=""
+            className="h-20 w-auto max-w-[60vw] object-contain"
+          />
           <h1 className="mt-4 text-3xl font-extrabold uppercase tracking-[0.15em] text-white">
             {brand.name}
             {brand.nameAccent && (

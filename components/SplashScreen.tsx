@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useApp } from "@/components/AppProvider";
-import { brandName } from "@/lib/brand";
+import { brandName, splashImage } from "@/lib/brand";
 
 /**
  * Pantalla de bienvenida.
@@ -33,12 +33,12 @@ export function SplashScreen() {
       />
 
       <motion.img
-        src={brand.mark}
+        src={splashImage(brand)}
         alt=""
         initial={{ scale: 0.82, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 220, damping: 18 }}
-        className="relative size-28 object-contain drop-shadow-[0_10px_40px_rgba(225,29,46,0.5)]"
+        className="relative h-32 w-auto max-w-[70vw] object-contain drop-shadow-[0_10px_40px_rgba(225,29,46,0.5)]"
       />
 
       <motion.p

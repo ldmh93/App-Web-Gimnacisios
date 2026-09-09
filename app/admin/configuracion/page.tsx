@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   compressImage,
+  splashImage,
   dataUrlSizeKb,
   DEFAULT_BRAND,
   type BrandConfig,
@@ -29,6 +30,7 @@ export default function AdminConfiguracionPage() {
   const [error, setError] = useState<string | null>(null);
   const markInput = useRef<HTMLInputElement>(null);
   const logoInput = useRef<HTMLInputElement>(null);
+  const splashInput = useRef<HTMLInputElement>(null);
 
   const set = <K extends keyof BrandConfig>(key: K, value: BrandConfig[K]) => {
     setDraft((d) => ({ ...d, [key]: value }));
@@ -37,7 +39,7 @@ export default function AdminConfiguracionPage() {
 
   const pickImage = async (
     file: File | undefined,
-    key: "mark" | "logo",
+    key: "mark" | "logo" | "splash",
     maxSize: number
   ) => {
     if (!file) return;
@@ -96,14 +98,14 @@ export default function AdminConfiguracionPage() {
       <Card className="overflow-hidden border-primary/30">
         <div className="flex flex-col items-center gap-3 bg-[#0c0c10] px-6 py-8">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-white/40">
-            Vista previa
+            Vista previa de la presentación
           </p>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={draft.mark}
+            src={splashImage(draft)}
             alt=""
-            className="size-20 object-contain"
-            onError={() => setError("No se pudo cargar el isotipo.")}
+            className="h-24 w-auto max-w-[70%] object-contain"
+            onError={() => setError("No se pudo cargar la imagen de marca.")}
           />
           <p className="text-2xl font-extrabold uppercase tracking-[0.15em] text-white">
             {draft.name || "NOMBRE"}
@@ -149,16 +151,25 @@ export default function AdminConfiguracionPage() {
             />
           </div>
 
-          {/* Imágenes */}
+          {/* Imágenes: una ranura por sitio donde aparece la marca */}
           <div className="grid gap-4 sm:grid-cols-2">
             {(
               [
                 {
                   key: "mark" as const,
                   label: "Isotipo (cuadrado)",
-                  hint: "Se usa en el header, el carnet y la bienvenida.",
+                  hint: "Header, carnet, perfil y panel. Conviene que sea cuadrado.",
                   ref: markInput,
                   size: 512,
+                  optional: false,
+                },
+                {
+                  key: "splash" as const,
+                  label: "Presentación y acceso",
+                  hint: "La pantalla de bienvenida y el login. Admite logotipo alargado.",
+                  ref: splashInput,
+                  size: 900,
+                  optional: true,
                 },
                 {
                   key: "logo" as const,
@@ -166,45 +177,70 @@ export default function AdminConfiguracionPage() {
                   hint: "Se usa grande en la portada.",
                   ref: logoInput,
                   size: 900,
+                  optional: false,
                 },
               ]
-            ).map((item) => (
-              <div key={item.key} className="space-y-2">
-                <Label>{item.label}</Label>
-                <div className="flex items-center gap-3 rounded-2xl border border-border/60 p-3">
-                  <div className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-muted">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={draft[item.key]}
-                      alt=""
-                      className="size-full object-contain p-1"
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs text-muted-foreground">{item.hint}</p>
-                    <input
-                      ref={item.ref}
-                      type="file"
-                      accept="image/*"
-                      hidden
-                      onChange={(e) =>
-                        pickImage(e.target.files?.[0], item.key, item.size)
-                      }
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="mt-2"
-                      onClick={() => item.ref.current?.click()}
-                    >
-                      <ImageUp className="size-4" />
-                      Subir imagen
-                    </Button>
+            ).map((item) => {
+              // Si la ranura opcional está vacía, se enseña de qué hereda para
+              // que no parezca que falta configurar algo.
+              const value = draft[item.key];
+              const shown = value || draft.mark;
+              return (
+                <div key={item.key} className="space-y-2">
+                  <Label>{item.label}</Label>
+                  <div className="flex items-center gap-3 rounded-2xl border border-border/60 p-3">
+                    <div className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-muted">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={shown}
+                        alt=""
+                        className="size-full object-contain p-1"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs text-muted-foreground">
+                        {item.hint}
+                      </p>
+                      {item.optional && !value && (
+                        <p className="mt-1 text-xs italic text-muted-foreground/70">
+                          Ahora usa el isotipo
+                        </p>
+                      )}
+                      <input
+                        ref={item.ref}
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={(e) =>
+                          pickImage(e.target.files?.[0], item.key, item.size)
+                        }
+                      />
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => item.ref.current?.click()}
+                        >
+                          <ImageUp className="size-4" />
+                          Subir imagen
+                        </Button>
+                        {item.optional && value && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => set(item.key, "")}
+                          >
+                            Quitar
+                          </Button>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {error && (

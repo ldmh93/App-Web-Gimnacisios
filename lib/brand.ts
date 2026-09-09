@@ -19,6 +19,11 @@ export interface BrandConfig {
   mark: string;
   /** Logotipo completo con lettering, para la portada. */
   logo: string;
+  /**
+   * Imagen de la presentación (splash) y de la pantalla de acceso.
+   * Vacío = se reutiliza el isotipo, que es el comportamiento por defecto.
+   */
+  splash: string;
   /** Frase de la portada. */
   tagline: string;
 }
@@ -32,8 +37,19 @@ export const DEFAULT_BRAND: BrandConfig = {
   nameAccent: "CORE",
   mark: "/brand/mark.png",
   logo: "/brand/logo.png",
+  splash: "",
   tagline: "Transforma tu cuerpo. Construye tu mejor versión.",
 };
+
+/**
+ * Imagen para la presentación y el acceso.
+ *
+ * Se resuelve con respaldo para que una configuración guardada antes de que
+ * existiera esta ranura (sin el campo `splash`) siga funcionando.
+ */
+export function splashImage(brand: BrandConfig): string {
+  return brand.splash || brand.mark;
+}
 
 /** Nombre completo para textos corridos, metadatos y correos. */
 export function brandName(brand: BrandConfig): string {
