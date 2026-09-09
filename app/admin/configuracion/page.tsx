@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import {
+  brandColor,
   compressImage,
   splashImage,
   dataUrlSizeKb,
@@ -122,13 +123,25 @@ export default function AdminConfiguracionPage() {
             className="h-24 w-auto max-w-[70%] object-contain"
             onError={() => setError("No se pudo cargar la imagen de marca.")}
           />
-          <p className="text-2xl font-extrabold uppercase tracking-[0.15em] text-white">
+          <p
+            className="text-2xl font-extrabold uppercase tracking-[0.15em] text-white"
+            style={{ color: brandColor(draft.nameColor) }}
+          >
             {draft.name || "NOMBRE"}
             {draft.nameAccent && (
-              <span className="text-primary"> {draft.nameAccent}</span>
+              <span
+                className="text-primary"
+                style={{ color: brandColor(draft.accentColor) }}
+              >
+                {" "}
+                {draft.nameAccent}
+              </span>
             )}
           </p>
-          <p className="max-w-xs text-center text-xs text-white/40">
+          <p
+            className="max-w-xs text-center text-xs text-white/40"
+            style={{ color: brandColor(draft.taglineColor) }}
+          >
             {draft.tagline}
           </p>
         </div>
@@ -164,6 +177,74 @@ export default function AdminConfiguracionPage() {
               value={draft.tagline}
               onChange={(e) => set("tagline", e.target.value)}
             />
+          </div>
+
+          {/* Colores de los textos de marca */}
+          <div className="space-y-2">
+            <Label>Color de los textos</Label>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {(
+                [
+                  { key: "nameColor" as const, label: "Nombre", fallback: "#ffffff" },
+                  {
+                    key: "accentColor" as const,
+                    label: "Palabra destacada",
+                    fallback: "#e5484d",
+                  },
+                  {
+                    key: "taglineColor" as const,
+                    label: "Lema",
+                    fallback: "#e5484d",
+                  },
+                ]
+              ).map((c) => {
+                const value = draft[c.key];
+                return (
+                  <div
+                    key={c.key}
+                    className="space-y-2 rounded-2xl border border-border/60 p-3"
+                  >
+                    <p className="text-xs font-medium">{c.label}</p>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={value || c.fallback}
+                        onChange={(e) => set(c.key, e.target.value)}
+                        aria-label={`Color de ${c.label.toLowerCase()}`}
+                        className="size-10 shrink-0 cursor-pointer rounded-lg border border-border bg-transparent"
+                      />
+                      <Input
+                        value={value}
+                        onChange={(e) => set(c.key, e.target.value)}
+                        placeholder="Automático"
+                        aria-label={`Código de color de ${c.label.toLowerCase()}`}
+                        className="h-10 font-mono text-xs"
+                      />
+                    </div>
+                    {value ? (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => set(c.key, "")}
+                        className="h-7 px-2 text-xs"
+                      >
+                        Usar automático
+                      </Button>
+                    ) : (
+                      <p className="text-xs italic text-muted-foreground/70">
+                        Sigue el color del tema
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Dejarlos en automático es lo más seguro: el color lo pone el tema
+              y se mantiene legible tanto en claro como en oscuro. Si fijas uno,
+              será el mismo en ambos temas, así que comprueba que se lea bien.
+            </p>
           </div>
 
           {/* Imágenes: una ranura por sitio donde aparece la marca */}

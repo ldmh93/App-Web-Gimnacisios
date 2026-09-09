@@ -26,6 +26,14 @@ export interface BrandConfig {
   splash: string;
   /** Frase de la portada. */
   tagline: string;
+  /**
+   * Colores de los textos de marca, en hexadecimal.
+   * Vacío = hereda el color del tema, que es el comportamiento por defecto y
+   * lo que mantiene el contraste correcto en claro y oscuro.
+   */
+  nameColor: string;
+  accentColor: string;
+  taglineColor: string;
 }
 
 /**
@@ -39,7 +47,19 @@ export const DEFAULT_BRAND: BrandConfig = {
   logo: "/brand/logo.png",
   splash: "",
   tagline: "Transforma tu cuerpo. Construye tu mejor versión.",
+  nameColor: "",
+  accentColor: "",
+  taglineColor: "",
 };
+
+/**
+ * Color de un texto de marca, o undefined para que herede el del tema.
+ * Se devuelve undefined (y no una cadena vacía) porque React omite la
+ * propiedad CSS, dejando que mande la clase de Tailwind.
+ */
+export function brandColor(value: string | undefined): string | undefined {
+  return value ? value : undefined;
+}
 
 /**
  * Imagen para la presentación y el acceso.

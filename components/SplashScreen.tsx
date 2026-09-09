@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useApp } from "@/components/AppProvider";
-import { brandName, splashImage } from "@/lib/brand";
+import { brandColor, brandName, splashImage } from "@/lib/brand";
 
 /**
  * Pantalla de bienvenida.
@@ -46,10 +46,17 @@ export function SplashScreen() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.12, duration: 0.35 }}
         className="relative mt-5 text-2xl font-extrabold uppercase tracking-[0.2em] text-white"
+        style={{ color: brandColor(brand.nameColor) }}
       >
         {brand.name}
         {brand.nameAccent && (
-          <span className="text-primary"> {brand.nameAccent}</span>
+          <span
+            className="text-primary"
+            style={{ color: brandColor(brand.accentColor) }}
+          >
+            {" "}
+            {brand.nameAccent}
+          </span>
         )}
       </motion.p>
 

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DEMO_ADMIN, login, register, startSession } from "@/lib/auth";
-import { brandName, splashImage } from "@/lib/brand";
+import { brandColor, brandName, splashImage } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 type Mode = "entrar" | "crear";
@@ -92,10 +92,19 @@ export default function LoginPage() {
             alt=""
             className="h-20 w-auto max-w-[60vw] object-contain"
           />
-          <h1 className="mt-4 text-3xl font-extrabold uppercase tracking-[0.15em] text-white">
+          <h1
+            className="mt-4 text-3xl font-extrabold uppercase tracking-[0.15em] text-white"
+            style={{ color: brandColor(brand.nameColor) }}
+          >
             {brand.name}
             {brand.nameAccent && (
-              <span className="text-primary"> {brand.nameAccent}</span>
+              <span
+                className="text-primary"
+                style={{ color: brandColor(brand.accentColor) }}
+              >
+                {" "}
+                {brand.nameAccent}
+              </span>
             )}
           </h1>
           <p className="mt-1 text-sm text-white/50">

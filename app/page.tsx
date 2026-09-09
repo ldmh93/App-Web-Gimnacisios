@@ -14,6 +14,8 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import { LogoFull } from "@/components/Logo";
+import { useApp } from "@/components/AppProvider";
+import { brandColor } from "@/lib/brand";
 import { GymCarousel } from "@/components/GymCarousel";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { Button } from "@/components/ui/button";
@@ -62,7 +64,7 @@ const FEATURES = [
     icon: Building2,
     title: "El gimnasio",
     description:
-      "Planes de membresía, horarios y contacto directo por WhatsApp con MORA'S GYM.",
+      "Planes de membresía, horarios, instalaciones y contacto directo por WhatsApp.",
     href: "/gimnasio",
   },
 ];
@@ -79,6 +81,7 @@ const item = {
 
 export default function LandingPage() {
   const router = useRouter();
+  const { brand } = useApp();
   const [profile, , hydrated] = useLocalStorage<UserProfile | null>(
     STORAGE_KEYS.profile,
     null
@@ -97,6 +100,13 @@ export default function LandingPage() {
   // pasa a completar el perfil. Antes apuntaba directo a /bienvenido, que hoy
   // está protegido y provocaría un rebote por la guarda.
   const startHref = "/login";
+
+  // El lema se parte en la primera frase para conservar el aspecto de dos
+  // líneas de la portada, con la segunda destacada. Si el lema es de una sola
+  // frase, simplemente no hay segunda línea.
+  const [taglineLead, ...taglineTail] = brand.tagline.split(/(?<=\.)\s+/);
+  const taglineRest = taglineTail.join(" ");
+  const taglineColor = brandColor(brand.taglineColor);
   const startLabel = "Crear mi cuenta";
 
   return (
@@ -141,11 +151,20 @@ export default function LandingPage() {
             variants={item}
             className="text-balance text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl"
           >
-            Transforma tu cuerpo.
-            <br />
-            <span className="text-gradient-brand">
-              Construye tu mejor versión.
-            </span>
+            {taglineLead}
+            {taglineRest && (
+              <>
+                <br />
+                <span
+                  // Con color propio se retira el degradado: bg-clip-text pinta
+                  // el texto en transparente y taparía cualquier color.
+                  className={taglineColor ? undefined : "text-gradient-brand"}
+                  style={{ color: taglineColor }}
+                >
+                  {taglineRest}
+                </span>
+              </>
+            )}
           </motion.h1>
 
           <motion.p

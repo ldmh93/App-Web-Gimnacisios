@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useApp } from "@/components/AppProvider";
-import { brandName } from "@/lib/brand";
+import { brandColor, brandName } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 /**
@@ -84,10 +84,17 @@ export function Logo({
             "text-lg font-extrabold uppercase tracking-widest",
             textClassName
           )}
+          style={{ color: brandColor(brand.nameColor) }}
         >
           {brand.name}
           {brand.nameAccent && (
-            <span className="text-primary"> {brand.nameAccent}</span>
+            <span
+              className="text-primary"
+              style={{ color: brandColor(brand.accentColor) }}
+            >
+              {" "}
+              {brand.nameAccent}
+            </span>
           )}
         </span>
       )}
