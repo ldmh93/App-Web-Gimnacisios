@@ -17,6 +17,7 @@ export const STORAGE_KEYS = {
   restSeconds: "fitcore:rest-seconds",
   /* --- Configuración e identidad (administrables desde /admin) --- */
   brand: "fitcore:brand",
+  brandPresets: "fitcore:brand-presets",
   accounts: "fitcore:accounts",
   authSession: "fitcore:auth-session",
   gymPhotos: "fitcore:gym-photos",

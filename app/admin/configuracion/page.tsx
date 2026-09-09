@@ -2,7 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Check, ImageUp, Pipette, RotateCcw, TriangleAlert } from "lucide-react";
+import {
+  BookmarkPlus,
+  Check,
+  ImageUp,
+  Pipette,
+  RotateCcw,
+  Trash2,
+  TriangleAlert,
+} from "lucide-react";
 import { useApp } from "@/components/AppProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +19,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   brandColor,
   compressImage,
+  addBrandPreset,
   extractAccentColor,
+  loadBrandPresets,
+  removeBrandPreset,
+  type BrandPreset,
   readableForeground,
   splashImage,
   dataUrlSizeKb,
@@ -33,6 +45,7 @@ export default function AdminConfiguracionPage() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [picking, setPicking] = useState(false);
+  const [presets, setPresets] = useState<BrandPreset[]>([]);
   const markInput = useRef<HTMLInputElement>(null);
   const logoInput = useRef<HTMLInputElement>(null);
   const splashInput = useRef<HTMLInputElement>(null);
@@ -47,6 +60,8 @@ export default function AdminConfiguracionPage() {
   useEffect(() => {
     if (ready && !touched) setDraft(brand);
   }, [ready, brand, touched]);
+
+  useEffect(() => setPresets(loadBrandPresets()), []);
 
   const set = <K extends keyof BrandConfig>(key: K, value: BrandConfig[K]) => {
     setDraft((d) => ({ ...d, [key]: value }));
@@ -444,6 +459,83 @@ export default function AdminConfiguracionPage() {
               {error}
             </p>
           )}
+
+          {/* Biblioteca de marcas: alternar entre gimnasios sin reconfigurar */}
+          <div className="space-y-3 rounded-2xl border border-border/60 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <Label>Marcas guardadas</Label>
+                <p className="text-xs text-muted-foreground">
+                  Guarda esta identidad para recuperarla cuando quieras.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setPresets(addBrandPreset(draft))}
+              >
+                <BookmarkPlus className="size-4" />
+                Guardar esta marca
+              </Button>
+            </div>
+
+            {presets.length === 0 ? (
+              <p className="text-xs italic text-muted-foreground/70">
+                Todavía no has guardado ninguna.
+              </p>
+            ) : (
+              <ul className="space-y-2">
+                {presets.map((p) => (
+                  <li
+                    key={p.id}
+                    className="flex items-center gap-3 rounded-xl border border-border/60 p-2"
+                  >
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={p.brand.mark}
+                        alt=""
+                        className="size-full object-contain p-0.5"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold">{p.label}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(p.savedAt).toLocaleDateString("es", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setDraft(p.brand);
+                        setBrand(p.brand);
+                        setTouched(false);
+                        setSaved(true);
+                      }}
+                    >
+                      Aplicar
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      aria-label={`Eliminar ${p.label}`}
+                      onClick={() => setPresets(removeBrandPreset(p.id))}
+                    >
+                      <Trash2 className="size-4 text-destructive" />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <Button onClick={save} disabled={!dirty} className="font-semibold">

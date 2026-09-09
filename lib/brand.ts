@@ -1,3 +1,5 @@
+import { generateId, loadFromStorage, saveToStorage, STORAGE_KEYS } from "@/lib/storage";
+
 /**
  * Identidad de marca configurable.
  *
@@ -256,4 +258,49 @@ export async function extractAccentColor(src: string): Promise<string | null> {
   if (best.count < 12) return null;
 
   return toHex(best.r / best.count, best.g / best.count, best.b / best.count);
+}
+
+/* ---------------------------- Marcas guardadas ---------------------------- */
+
+/**
+ * Biblioteca de identidades.
+ *
+ * Guardar la marca activa no basta cuando el objetivo es presentar la misma
+ * aplicación a varios gimnasios: al configurar el siguiente se perdería el
+ * anterior. Aquí se conservan todas y se alterna entre ellas.
+ */
+export interface BrandPreset {
+  id: string;
+  label: string;
+  savedAt: string;
+  brand: BrandConfig;
+}
+
+export function loadBrandPresets(): BrandPreset[] {
+  return loadFromStorage<BrandPreset[]>(STORAGE_KEYS.brandPresets, []);
+}
+
+export function saveBrandPresets(presets: BrandPreset[]): void {
+  saveToStorage(STORAGE_KEYS.brandPresets, presets);
+}
+
+/** Guarda la marca actual con el nombre que ya lleva. Sustituye si repite. */
+export function addBrandPreset(brand: BrandConfig): BrandPreset[] {
+  const label = brandName(brand) || "Sin nombre";
+  const preset: BrandPreset = {
+    id: generateId("marca"),
+    label,
+    savedAt: new Date().toISOString(),
+    brand,
+  };
+  const rest = loadBrandPresets().filter((p) => p.label !== label);
+  const next = [preset, ...rest];
+  saveBrandPresets(next);
+  return next;
+}
+
+export function removeBrandPreset(id: string): BrandPreset[] {
+  const next = loadBrandPresets().filter((p) => p.id !== id);
+  saveBrandPresets(next);
+  return next;
 }
