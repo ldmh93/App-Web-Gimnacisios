@@ -17,11 +17,27 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "MORA'S GYM — Tu entrenador personal digital",
-    template: "%s | MORA'S GYM",
+    default: "FIT CORE — Tu entrenador personal digital",
+    template: "%s | FIT CORE",
   },
   description:
     "Entrena, aliméntate y controla tu progreso desde una sola plataforma. Rutinas inteligentes, planes nutricionales y seguimiento corporal.",
+  // Tarjeta que se ve al compartir el enlace (WhatsApp, redes, Slack).
+  // La imagen la aporta app/opengraph-image.png por convención del App Router.
+  openGraph: {
+    type: "website",
+    siteName: "FIT CORE",
+    title: "FIT CORE — Tu entrenador personal digital",
+    description:
+      "Rutinas, biblioteca de ejercicios con mapa muscular, seguimiento de progreso y nutrición.",
+    locale: "es_MX",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FIT CORE — Tu entrenador personal digital",
+    description:
+      "Rutinas, biblioteca de ejercicios con mapa muscular, seguimiento de progreso y nutrición.",
+  },
 };
 
 export default function RootLayout({
