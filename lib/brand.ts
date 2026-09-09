@@ -44,15 +44,30 @@ export interface BrandConfig {
 }
 
 /**
- * Identidad por defecto del producto.
+ * Identidad que ve quien abre la aplicación sin configurar nada.
  *
- * Las imágenes son propias de FIT CORE. Antes se reutilizaban las de MORA'S
- * GYM, pero el logotipo grande lleva ESE nombre escrito dentro y chocaba con
- * el "FIT CORE" del header. Las de MORA'S siguen en /brand/mark.png y
- * /brand/logo.png: se pueden volver a poner desde Configuración cuando se
- * presente la app a ese gimnasio.
+ * Es la del gimnasio al que se está presentando, no la del producto: lo que
+ * se guarda en el panel vive en el navegador de cada persona, así que si aquí
+ * quedara FIT CORE, cualquiera que abriera el enlace publicado vería FIT CORE
+ * por mucho que el administrador hubiera configurado otra cosa en el suyo.
+ *
+ * FIT CORE sigue disponible en BUILTIN_BRANDS, a un toque desde Configuración.
  */
 export const DEFAULT_BRAND: BrandConfig = {
+  name: "MARA",
+  nameAccent: "FITNESS",
+  mark: "/brand/mara-mark.png",
+  logo: "/brand/mara-logo.png",
+  splash: "/brand/mara-logo.png",
+  tagline: "Entrena con constancia. Los resultados llegan.",
+  primaryColor: "#f5c518",
+  nameColor: "",
+  accentColor: "",
+  taglineColor: "",
+};
+
+/** Identidad del producto, por si se quiere volver a ella. */
+export const FITCORE_BRAND: BrandConfig = {
   name: "FIT",
   nameAccent: "CORE",
   mark: "/brand/fitcore-mark.png",
@@ -320,22 +335,11 @@ export const BUILTIN_BRANDS: { id: string; label: string; brand: BrandConfig }[]
   {
     id: "builtin-fitcore",
     label: "FIT CORE",
-    brand: DEFAULT_BRAND,
+    brand: FITCORE_BRAND,
   },
   {
     id: "builtin-mara",
     label: "MARA FITNESS",
-    brand: {
-      name: "MARA",
-      nameAccent: "FITNESS",
-      mark: "/brand/mara-mark.png",
-      logo: "/brand/mara-logo.png",
-      splash: "/brand/mara-logo.png",
-      tagline: "Entrena con constancia. Los resultados llegan.",
-      primaryColor: "#f5c518",
-      nameColor: "",
-      accentColor: "",
-      taglineColor: "",
-    },
+    brand: DEFAULT_BRAND,
   },
 ];

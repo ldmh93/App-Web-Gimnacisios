@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "FIT CORE — Tu entrenador personal digital",
-    template: "%s | FIT CORE",
+    default: "MARA FITNESS — Entrena con constancia",
+    template: "%s | MARA FITNESS",
   },
   description:
     "Entrena, aliméntate y controla tu progreso desde una sola plataforma. Rutinas inteligentes, planes nutricionales y seguimiento corporal.",
@@ -26,15 +26,15 @@ export const metadata: Metadata = {
   // La imagen la aporta app/opengraph-image.png por convención del App Router.
   openGraph: {
     type: "website",
-    siteName: "FIT CORE",
-    title: "FIT CORE — Tu entrenador personal digital",
+    siteName: "MARA FITNESS",
+    title: "MARA FITNESS — Entrena con constancia",
     description:
       "Rutinas, biblioteca de ejercicios con mapa muscular, seguimiento de progreso y nutrición.",
     locale: "es_MX",
   },
   twitter: {
     card: "summary_large_image",
-    title: "FIT CORE — Tu entrenador personal digital",
+    title: "MARA FITNESS — Entrena con constancia",
     description:
       "Rutinas, biblioteca de ejercicios con mapa muscular, seguimiento de progreso y nutrición.",
   },

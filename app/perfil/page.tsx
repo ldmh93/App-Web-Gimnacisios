@@ -111,7 +111,7 @@ export default function PerfilPage() {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-lg font-bold">{profile.name}</p>
                 <p className="truncate text-sm text-muted-foreground">
-                  Socio · {profile.memberNumber}
+                  Socio{profile.memberNumber ? ` · ${profile.memberNumber}` : ""}
                 </p>
               </div>
               <Button asChild variant="outline" size="sm">

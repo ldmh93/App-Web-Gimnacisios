@@ -155,7 +155,7 @@ export function Header() {
                           {profile.name}
                         </span>
                         <span className="block truncate text-xs font-normal text-muted-foreground">
-                          Socio · {profile.memberNumber}
+                          Socio{profile.memberNumber ? ` · ${profile.memberNumber}` : ""}
                         </span>
                       </span>
                     </DropdownMenuLabel>
