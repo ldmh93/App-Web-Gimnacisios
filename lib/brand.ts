@@ -27,6 +27,11 @@ export interface BrandConfig {
   /** Frase de la portada. */
   tagline: string;
   /**
+   * Color de acento de TODA la interfaz: botones, enlaces, resaltados del mapa
+   * muscular, gráficas. Vacío = el rojo del tema.
+   */
+  primaryColor: string;
+  /**
    * Colores de los textos de marca, en hexadecimal.
    * Vacío = hereda el color del tema, que es el comportamiento por defecto y
    * lo que mantiene el contraste correcto en claro y oscuro.
@@ -47,6 +52,7 @@ export const DEFAULT_BRAND: BrandConfig = {
   logo: "/brand/logo.png",
   splash: "",
   tagline: "Transforma tu cuerpo. Construye tu mejor versión.",
+  primaryColor: "",
   nameColor: "",
   accentColor: "",
   taglineColor: "",
@@ -122,4 +128,127 @@ export function dataUrlSizeKb(dataUrl: string): number {
   if (!dataUrl.startsWith("data:")) return 0;
   const base64 = dataUrl.slice(dataUrl.indexOf(",") + 1);
   return Math.round((base64.length * 0.75) / 1024);
+}
+
+/* ------------------------- Color principal de la app ---------------------- */
+
+/**
+ * El color de acento de toda la interfaz (`--primary`) vive en globals.css con
+ * un rojo fijo. Estas funciones permiten sustituirlo por el color del gimnasio
+ * y, sobre todo, DEDUCIRLO del logotipo que suba el administrador: así la app
+ * entera queda en armonía con la marca sin pedirle que acierte un hexadecimal.
+ */
+
+/** Convierte "#rrggbb" a sus componentes. Devuelve null si no es válido. */
+function parseHex(hex: string): { r: number; g: number; b: number } | null {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!m) return null;
+  const n = parseInt(m[1], 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+
+function toHex(r: number, g: number, b: number): string {
+  const c = (v: number) =>
+    Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0");
+  return `#${c(r)}${c(g)}${c(b)}`;
+}
+
+/**
+ * Blanco o negro según lo que se lea mejor encima del color dado.
+ * Usa la luminancia relativa de WCAG, no el promedio de los canales: el ojo es
+ * mucho más sensible al verde, y promediar da resultados ilegibles.
+ */
+export function readableForeground(hex: string): string {
+  const rgb = parseHex(hex);
+  if (!rgb) return "#ffffff";
+  const channel = (v: number) => {
+    const s = v / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  };
+  const luminance =
+    0.2126 * channel(rgb.r) + 0.7152 * channel(rgb.g) + 0.0722 * channel(rgb.b);
+  return luminance > 0.45 ? "#111111" : "#ffffff";
+}
+
+/**
+ * Deduce el color de acento de una imagen.
+ *
+ * Descarta lo transparente, lo casi blanco, lo casi negro y lo desaturado —que
+ * en un logotipo suele ser el contorno o el fondo— y se queda con el tono
+ * cromático dominante. Si el logo es puramente monocromo devuelve null, porque
+ * inventarle un color sería peor que dejar el del tema.
+ *
+ * Del tono ganador se toma el PROMEDIO y no el píxel más saturado: probado
+ * contra los logotipos reales, el más saturado devuelve el rojo de las sombras
+ * (#8e0000) en vez del rojo de marca (#c55451). El promedio sale algo más
+ * apagado, que además le sienta bien a un acento de interfaz.
+ */
+export async function extractAccentColor(src: string): Promise<string | null> {
+  const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("No se pudo leer la imagen"));
+    img.src = src;
+  });
+
+  const size = 72; // Suficiente para el tono dominante y muy barato de recorrer.
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  if (!ctx) return null;
+  ctx.drawImage(image, 0, 0, size, size);
+
+  let data: Uint8ClampedArray;
+  try {
+    data = ctx.getImageData(0, 0, size, size).data;
+  } catch {
+    return null; // Lienzo contaminado por una imagen de otro origen.
+  }
+
+  // 24 cubos de tono (15° cada uno) con la suma de sus colores.
+  const buckets = Array.from({ length: 24 }, () => ({
+    count: 0,
+    r: 0,
+    g: 0,
+    b: 0,
+  }));
+
+  for (let i = 0; i < data.length; i += 4) {
+    const [r, g, b, a] = [data[i], data[i + 1], data[i + 2], data[i + 3]];
+    if (a < 128) continue;
+
+    const max = Math.max(r, g, b) / 255;
+    const min = Math.min(r, g, b) / 255;
+    const lightness = (max + min) / 2;
+    if (lightness < 0.12 || lightness > 0.9) continue; // negro y blanco fuera
+
+    const delta = max - min;
+    const saturation =
+      delta === 0 ? 0 : delta / (1 - Math.abs(2 * lightness - 1));
+    if (saturation < 0.28) continue; // grises fuera
+
+    // Tono en grados
+    const rn = r / 255;
+    const gn = g / 255;
+    const bn = b / 255;
+    let hue: number;
+    if (max === rn) hue = ((gn - bn) / delta) % 6;
+    else if (max === gn) hue = (bn - rn) / delta + 2;
+    else hue = (rn - gn) / delta + 4;
+    hue = (hue * 60 + 360) % 360;
+
+    const bucket = buckets[Math.floor(hue / 15)];
+    bucket.count++;
+    bucket.r += r;
+    bucket.g += g;
+    bucket.b += b;
+  }
+
+  const best = buckets.reduce((a, b) => (b.count > a.count ? b : a));
+  // Con muy pocos píxeles cromáticos el resultado sería ruido, no la marca.
+  if (best.count < 12) return null;
+
+  return toHex(best.r / best.count, best.g / best.count, best.b / best.count);
 }

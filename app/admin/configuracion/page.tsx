@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Check, ImageUp, RotateCcw, TriangleAlert } from "lucide-react";
+import { Check, ImageUp, Pipette, RotateCcw, TriangleAlert } from "lucide-react";
 import { useApp } from "@/components/AppProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   brandColor,
   compressImage,
+  extractAccentColor,
+  readableForeground,
   splashImage,
   dataUrlSizeKb,
   DEFAULT_BRAND,
@@ -30,6 +32,7 @@ export default function AdminConfiguracionPage() {
   const [touched, setTouched] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [picking, setPicking] = useState(false);
   const markInput = useRef<HTMLInputElement>(null);
   const logoInput = useRef<HTMLInputElement>(null);
   const splashInput = useRef<HTMLInputElement>(null);
@@ -71,6 +74,34 @@ export default function AdminConfiguracionPage() {
       set(key, dataUrl);
     } catch (e) {
       setError(e instanceof Error ? e.message : "No se pudo procesar la imagen.");
+    }
+  };
+
+  /**
+   * Deduce el color de acento del logotipo.
+   *
+   * Prueba primero con la imagen de la presentación y, si esa no da un tono
+   * claro (logos monocromos), con el isotipo: son la misma marca, y basta con
+   * que una de las dos tenga color.
+   */
+  const takeColorFromLogo = async () => {
+    setPicking(true);
+    setError(null);
+    try {
+      const found =
+        (await extractAccentColor(splashImage(draft))) ??
+        (await extractAccentColor(draft.mark));
+      if (!found) {
+        setError(
+          "El logotipo es monocromo, así que no hay un color de marca que tomar. Elígelo a mano."
+        );
+        return;
+      }
+      set("primaryColor", found);
+    } catch {
+      setError("No se pudo analizar el logotipo.");
+    } finally {
+      setPicking(false);
     }
   };
 
@@ -177,6 +208,71 @@ export default function AdminConfiguracionPage() {
               value={draft.tagline}
               onChange={(e) => set("tagline", e.target.value)}
             />
+          </div>
+
+          {/* Color de acento de toda la interfaz */}
+          <div className="space-y-2 rounded-2xl border border-primary/30 bg-primary/5 p-4">
+            <Label>Color principal de la aplicación</Label>
+            <p className="text-xs text-muted-foreground">
+              Tiñe botones, enlaces, el resaltado del mapa muscular y las
+              gráficas. Es lo que pone toda la app en armonía con el logotipo.
+            </p>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <input
+                type="color"
+                value={draft.primaryColor || "#e5484d"}
+                onChange={(e) => set("primaryColor", e.target.value)}
+                aria-label="Color principal de la aplicación"
+                className="size-11 shrink-0 cursor-pointer rounded-lg border border-border bg-transparent"
+              />
+              <Input
+                value={draft.primaryColor}
+                onChange={(e) => set("primaryColor", e.target.value)}
+                placeholder="Automático"
+                aria-label="Código del color principal"
+                className="h-11 w-32 font-mono text-xs"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={takeColorFromLogo}
+                disabled={picking}
+              >
+                <Pipette className="size-4" />
+                {picking ? "Analizando…" : "Tomar del logo"}
+              </Button>
+              {draft.primaryColor && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => set("primaryColor", "")}
+                >
+                  Automático
+                </Button>
+              )}
+            </div>
+            {/* Muestra cómo queda un botón con ese color */}
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span
+                className={cn(
+                  "rounded-full px-4 py-2 text-sm font-semibold",
+                  !draft.primaryColor && "bg-primary text-primary-foreground"
+                )}
+                style={
+                  draft.primaryColor
+                    ? {
+                        backgroundColor: draft.primaryColor,
+                        color: readableForeground(draft.primaryColor),
+                      }
+                    : undefined
+                }
+              >
+                Botón principal
+              </span>
+              <span className="text-xs text-muted-foreground">
+                El texto encima se elige por contraste automáticamente
+              </span>
+            </div>
           </div>
 
           {/* Colores de los textos de marca */}

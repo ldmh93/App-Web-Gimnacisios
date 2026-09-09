@@ -16,7 +16,11 @@ import {
   type Account,
   type Role,
 } from "@/lib/auth";
-import { DEFAULT_BRAND, type BrandConfig } from "@/lib/brand";
+import {
+  DEFAULT_BRAND,
+  readableForeground,
+  type BrandConfig,
+} from "@/lib/brand";
 import { loadFromStorage, saveToStorage, STORAGE_KEYS } from "@/lib/storage";
 
 interface AppContextValue {
@@ -72,6 +76,29 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setBrandState(next);
     saveToStorage(STORAGE_KEYS.brand, next);
   }, []);
+
+  /**
+   * Repinta la interfaz con el color del gimnasio.
+   *
+   * `--primary` está definido en globals.css con un rojo fijo; al escribirlo en
+   * el elemento raíz manda sobre esa hoja y toda la app (botones, resaltados
+   * del mapa muscular, gráficas) queda en armonía con la marca sin duplicar
+   * ningún estilo. También se ajusta `--primary-foreground` por contraste: con
+   * un acento claro, el texto blanco encima sería ilegible.
+   */
+  useEffect(() => {
+    const root = document.documentElement;
+    const color = brand.primaryColor;
+    if (!color) {
+      root.style.removeProperty("--primary");
+      root.style.removeProperty("--ring");
+      root.style.removeProperty("--primary-foreground");
+      return;
+    }
+    root.style.setProperty("--primary", color);
+    root.style.setProperty("--ring", color);
+    root.style.setProperty("--primary-foreground", readableForeground(color));
+  }, [brand.primaryColor]);
 
   const signOut = useCallback(() => {
     clearSession();
