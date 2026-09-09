@@ -140,9 +140,10 @@ export function dataUrlSizeKb(dataUrl: string): number {
 /* ------------------------- Color principal de la app ---------------------- */
 
 /**
- * El color de acento de toda la interfaz (`--primary`) vive en globals.css con
- * un rojo fijo. Estas funciones permiten sustituirlo por el color del gimnasio
- * y, sobre todo, DEDUCIRLO del logotipo que suba el administrador: así la app
+ * El color del gimnasio se escribe en una sola variable, `--brand`, de la que
+ * globals.css deriva el fondo, el cristal de las tarjetas, los botones, los
+ * bordes y las manchas de luz. Estas funciones permiten fijar ese color y,
+ * sobre todo, DEDUCIRLO del logotipo que suba el administrador: así la app
  * entera queda en armonía con la marca sin pedirle que acierte un hexadecimal.
  */
 
@@ -304,3 +305,37 @@ export function removeBrandPreset(id: string): BrandPreset[] {
   saveBrandPresets(next);
   return next;
 }
+
+/**
+ * Marcas incluidas de fábrica.
+ *
+ * Se ofrecen junto a las guardadas para poder enseñar la app a un gimnasio sin
+ * configurar nada antes. No se pueden borrar: son parte del producto, a
+ * diferencia de las que guarda el administrador.
+ *
+ * Los colores de acento están tomados de cada logotipo, así que los botones ya
+ * combinan al aplicarlas.
+ */
+export const BUILTIN_BRANDS: { id: string; label: string; brand: BrandConfig }[] = [
+  {
+    id: "builtin-fitcore",
+    label: "FIT CORE",
+    brand: DEFAULT_BRAND,
+  },
+  {
+    id: "builtin-mara",
+    label: "MARA FITNESS",
+    brand: {
+      name: "MARA",
+      nameAccent: "FITNESS",
+      mark: "/brand/mara-mark.png",
+      logo: "/brand/mara-logo.png",
+      splash: "/brand/mara-logo.png",
+      tagline: "Entrena con constancia. Los resultados llegan.",
+      primaryColor: "#f5c518",
+      nameColor: "",
+      accentColor: "",
+      taglineColor: "",
+    },
+  },
+];

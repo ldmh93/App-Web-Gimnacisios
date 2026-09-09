@@ -43,40 +43,38 @@
    * COLOR DE MARCA.
    *
    * Es la ÚNICA pieza que cambia de un gimnasio a otro: AppProvider la escribe
-   * en el elemento raíz con el tono extraído del logotipo. Todo lo demás
-   * —fondo, cristal, botones, bordes, resplandores— se deriva de aquí con
-   * color-mix, así que la aplicación entera se repinta sola y queda en armonía
-   * con el logo sin duplicar estilos ni tocar un solo componente.
+   * en el elemento raíz con el tono extraído del logotipo. De ella cuelgan el
+   * fondo, el cristal de las tarjetas, los botones, los bordes y las manchas de
+   * luz, así que la aplicación entera se repinta sola y queda en armonía con el
+   * logo sin duplicar estilos ni tocar un solo componente.
+   *
+   * Lo que sigue en este bloque son los valores BASE, sin teñir. La mezcla con
+   * el color de marca se hace más abajo, dentro de @supports: un navegador sin
+   * color-mix se queda con este tema neutro, que es exactamente el de siempre,
+   * en vez de con una mezcla a medias.
    */
   --brand: oklch(0.55 0.22 27);
-  /* Variantes de la misma familia: dan profundidad a fondos y degradados. */
-  --brand-light: color-mix(in oklab, var(--brand) 60%, white);
-  --brand-deep: color-mix(in oklab, var(--brand) 78%, black);
+  --brand-light: var(--brand);
+  --brand-deep: var(--brand);
 
-  --background: color-mix(in oklab, var(--brand) 5%, oklch(0.97 0.005 120));
+  --background: oklch(0.97 0.005 120);
   --foreground: oklch(0.15 0.01 120);
-  /*
-   * Las superficies translúcidas se tiñen en DOS pasos: primero el color
-   * opaco, y luego la transparencia. Mezclar de una vez contra un color que ya
-   * lleva alfa la subiría (0.62 pasaría a 0.64...) y el cristal se iría
-   * volviendo opaco a cada retoque.
-   */
-  --card: color-mix(in oklab, color-mix(in oklab, var(--brand) 8%, white) 62%, transparent);
+  --card: oklch(1 0 0 / 0.62);
   --card-foreground: oklch(0.15 0.01 120);
-  --popover: color-mix(in oklab, color-mix(in oklab, var(--brand) 6%, white) 85%, transparent);
+  --popover: oklch(1 0 0 / 0.85);
   --popover-foreground: oklch(0.15 0.01 120);
   --primary: var(--brand);
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: color-mix(in oklab, color-mix(in oklab, var(--brand) 12%, white) 55%, transparent);
+  --secondary: oklch(1 0 0 / 0.55);
   --secondary-foreground: oklch(0.2 0.01 120);
   --muted: oklch(0.55 0.01 120 / 0.1);
   --muted-foreground: oklch(0.5 0.01 120);
-  --accent: color-mix(in oklab, var(--brand) 14%, oklch(0.99 0 0));
+  --accent: oklch(0.95 0.03 27);
   --accent-foreground: var(--brand-deep);
   --destructive: oklch(0.5 0.21 20);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: color-mix(in oklab, color-mix(in oklab, var(--brand) 35%, oklch(0.3 0.01 120)) 14%, transparent);
-  --input: color-mix(in oklab, color-mix(in oklab, var(--brand) 35%, oklch(0.3 0.01 120)) 16%, transparent);
+  --border: oklch(0.3 0.01 120 / 0.14);
+  --input: oklch(0.3 0.01 120 / 0.16);
   --ring: var(--brand);
   --chart-1: var(--brand);
   --chart-2: oklch(0.6 0.15 200);
@@ -84,9 +82,9 @@
   --chart-4: oklch(0.62 0.2 300);
   --chart-5: oklch(0.55 0.12 150);
   /* Manchas de color del fondo ambiental (detrás del cristal) */
-  --glow-1: color-mix(in oklab, var(--brand) 16%, transparent);
-  --glow-2: color-mix(in oklab, var(--brand-light) 18%, transparent);
-  --glow-3: color-mix(in oklab, var(--brand-deep) 16%, transparent);
+  --glow-1: oklch(0.6 0.2 27 / 0.16);
+  --glow-2: oklch(0.7 0.16 45 / 0.16);
+  --glow-3: oklch(0.5 0.19 10 / 0.14);
 }
 
 .dark {
@@ -97,33 +95,113 @@
    */
   --brand: oklch(0.63 0.25 28);
 
-  --background: color-mix(in oklab, var(--brand) 7%, oklch(0.17 0.008 130));
+  --background: oklch(0.17 0.008 130);
   --foreground: oklch(0.96 0.005 120);
-  --card: color-mix(in oklab, color-mix(in oklab, var(--brand) 14%, oklch(0.28 0.012 140)) 42%, transparent);
+  --card: oklch(0.28 0.012 140 / 0.42);
   --card-foreground: oklch(0.96 0.005 120);
-  --popover: color-mix(in oklab, color-mix(in oklab, var(--brand) 10%, oklch(0.24 0.01 140)) 88%, transparent);
+  --popover: oklch(0.24 0.01 140 / 0.88);
   --popover-foreground: oklch(0.96 0.005 120);
   --primary: var(--brand);
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: color-mix(in oklab, color-mix(in oklab, var(--brand) 16%, oklch(0.35 0.012 140)) 45%, transparent);
+  --secondary: oklch(0.35 0.012 140 / 0.45);
   --secondary-foreground: oklch(0.96 0.005 120);
   --muted: oklch(0.6 0.02 140 / 0.14);
   --muted-foreground: oklch(0.7 0.01 120);
-  --accent: color-mix(in oklab, var(--brand-deep) 40%, transparent);
-  --accent-foreground: color-mix(in oklab, var(--brand) 65%, white);
+  --accent: oklch(0.45 0.12 27 / 0.4);
+  --accent-foreground: oklch(0.85 0.12 27);
   --destructive: oklch(0.55 0.2 15);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: color-mix(in oklab, color-mix(in oklab, var(--brand) 30%, oklch(0.95 0.01 130)) 13%, transparent);
-  --input: color-mix(in oklab, color-mix(in oklab, var(--brand) 30%, oklch(0.95 0.01 130)) 15%, transparent);
+  --border: oklch(0.95 0.01 130 / 0.13);
+  --input: oklch(0.95 0.01 130 / 0.15);
   --ring: var(--brand);
   --chart-1: var(--brand);
   --chart-2: oklch(0.72 0.13 200);
   --chart-3: oklch(0.8 0.15 65);
   --chart-4: oklch(0.72 0.16 300);
   --chart-5: oklch(0.7 0.13 150);
-  --glow-1: color-mix(in oklab, var(--brand) 30%, transparent);
-  --glow-2: color-mix(in oklab, var(--brand-light) 20%, transparent);
-  --glow-3: color-mix(in oklab, var(--brand-deep) 28%, transparent);
+  --glow-1: oklch(0.5 0.2 27 / 0.3);
+  --glow-2: oklch(0.55 0.16 45 / 0.22);
+  --glow-3: oklch(0.4 0.17 10 / 0.28);
+}
+
+/* =====================================================================
+   TINTE DE MARCA
+   Aquí el fondo, el cristal y los bordes dejan de ser neutros y toman el
+   color del logotipo. Las superficies translúcidas se tiñen en DOS pasos
+   —primero el color opaco, luego la transparencia—: mezclar de una vez
+   contra un color que ya lleva alfa la subiría (0.62 pasaría a 0.64...) y el
+   cristal se iría volviendo opaco a cada retoque.
+   ===================================================================== */
+@supports (color: color-mix(in oklab, red, red)) {
+  :root {
+    --brand-light: color-mix(in oklab, var(--brand) 60%, white);
+    --brand-deep: color-mix(in oklab, var(--brand) 78%, black);
+
+    --background: color-mix(in oklab, var(--brand) 5%, oklch(0.97 0.005 120));
+    --card: color-mix(
+      in oklab,
+      color-mix(in oklab, var(--brand) 8%, white) 62%,
+      transparent
+    );
+    --popover: color-mix(
+      in oklab,
+      color-mix(in oklab, var(--brand) 6%, white) 85%,
+      transparent
+    );
+    --secondary: color-mix(
+      in oklab,
+      color-mix(in oklab, var(--brand) 12%, white) 55%,
+      transparent
+    );
+    --accent: color-mix(in oklab, var(--brand) 14%, oklch(0.99 0 0));
+    --border: color-mix(
+      in oklab,
+      color-mix(in oklab, var(--brand) 35%, oklch(0.3 0.01 120)) 14%,
+      transparent
+    );
+    --input: color-mix(
+      in oklab,
+      color-mix(in oklab, var(--brand) 35%, oklch(0.3 0.01 120)) 16%,
+      transparent
+    );
+    --glow-1: color-mix(in oklab, var(--brand) 16%, transparent);
+    --glow-2: color-mix(in oklab, var(--brand-light) 18%, transparent);
+    --glow-3: color-mix(in oklab, var(--brand-deep) 16%, transparent);
+  }
+
+  .dark {
+    --background: color-mix(in oklab, var(--brand) 7%, oklch(0.17 0.008 130));
+    --card: color-mix(
+      in oklab,
+      color-mix(in oklab, var(--brand) 14%, oklch(0.28 0.012 140)) 42%,
+      transparent
+    );
+    --popover: color-mix(
+      in oklab,
+      color-mix(in oklab, var(--brand) 10%, oklch(0.24 0.01 140)) 88%,
+      transparent
+    );
+    --secondary: color-mix(
+      in oklab,
+      color-mix(in oklab, var(--brand) 16%, oklch(0.35 0.012 140)) 45%,
+      transparent
+    );
+    --accent: color-mix(in oklab, var(--brand-deep) 40%, transparent);
+    --accent-foreground: color-mix(in oklab, var(--brand) 65%, white);
+    --border: color-mix(
+      in oklab,
+      color-mix(in oklab, var(--brand) 30%, oklch(0.95 0.01 130)) 13%,
+      transparent
+    );
+    --input: color-mix(
+      in oklab,
+      color-mix(in oklab, var(--brand) 30%, oklch(0.95 0.01 130)) 15%,
+      transparent
+    );
+    --glow-1: color-mix(in oklab, var(--brand) 30%, transparent);
+    --glow-2: color-mix(in oklab, var(--brand-light) 20%, transparent);
+    --glow-3: color-mix(in oklab, var(--brand-deep) 28%, transparent);
+  }
 }
 
 @layer base {
@@ -138,7 +216,31 @@
 @layer utilities {
   /* Texto con degradado de marca */
   .text-gradient-brand {
-    @apply bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      to right,
+      var(--brand),
+      var(--brand-light)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /*
+   * Manchas del fondo interactivo. Antes eran rojo y naranja fijos, que
+   * desentonaban en cuanto la marca no era roja; ahora son tres profundidades
+   * del propio color del logotipo. Son decorativas, así que sin color-mix
+   * sencillamente no se pintan, antes que caer a un color sólido.
+   */
+  @supports (color: color-mix(in oklab, red, red)) {
+    .bg-glow-brand {
+      background-color: color-mix(in oklab, var(--brand) 25%, transparent);
+    }
+    .bg-glow-brand-light {
+      background-color: color-mix(in oklab, var(--brand-light) 22%, transparent);
+    }
+    .bg-glow-brand-deep {
+      background-color: color-mix(in oklab, var(--brand-deep) 22%, transparent);
+    }
   }
   /* Resplandor neón para elementos destacados */
   .glow-primary {
@@ -230,6 +332,57 @@ body::before {
   box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.25);
 }
 
+/*
+ * Los botones se pintan por su variante (data-variant), no por sus clases: es
+ * el mismo dato que usa shadcn y no se rompe si mañana cambian las utilidades
+ * de Tailwind que lleva cada variante.
+ *
+ * El botón principal lleva un degradado vertical muy suave —luz arriba, sombra
+ * abajo— y un halo del color de la marca. Ambos se calculan sobre --brand, así
+ * que el relieve se conserva sea cual sea el logotipo.
+ */
+[data-slot="button"][data-variant="default"] {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in oklab, white 20%, transparent),
+    transparent 55%,
+    color-mix(in oklab, black 12%, transparent)
+  );
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.28),
+    0 10px 24px -12px var(--brand);
+}
+
+[data-slot="button"][data-variant="default"]:hover {
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.32),
+    0 14px 30px -12px var(--brand);
+}
+
+/* Contorno y secundario: cristal teñido con la marca, no gris neutro. */
+[data-slot="button"][data-variant="outline"] {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+@supports (color: color-mix(in oklab, red, red)) {
+  [data-slot="button"][data-variant="outline"] {
+    background-color: color-mix(in oklab, var(--brand) 8%, transparent);
+    border-color: color-mix(in oklab, var(--brand) 28%, transparent);
+  }
+
+  [data-slot="button"][data-variant="outline"]:hover {
+    background-color: color-mix(in oklab, var(--brand) 16%, transparent);
+    border-color: color-mix(in oklab, var(--brand) 42%, transparent);
+  }
+}
+
+[data-slot="button"][data-variant="secondary"] {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.2);
+}
+
 /* Campos de formulario tipo cápsula translúcida */
 [data-slot="input"],
 [data-slot="select-trigger"] {
@@ -271,4 +424,34 @@ body::before {
 
 [data-slot="progress"] {
   box-shadow: inset 0 1px 2px oklch(0 0 0 / 0.15);
+}
+
+/* =====================================================================
+   CARNET DE SOCIO
+   El plástico del carnet también acompaña al logotipo: tres profundidades
+   del color de marca sobre casi negro. Vive aquí, y no en un estilo en
+   línea, porque así puede llevar respaldo para navegadores sin color-mix.
+   ===================================================================== */
+.member-card-bg {
+  background: radial-gradient(
+    120% 120% at 15% 10%,
+    #3a1114 0%,
+    #1d0e10 55%,
+    #120a0b 100%
+  );
+}
+
+.member-card-glow {
+  background: radial-gradient(circle, var(--brand), transparent);
+}
+
+@supports (color: color-mix(in oklab, red, red)) {
+  .member-card-bg {
+    background: radial-gradient(
+      120% 120% at 15% 10%,
+      color-mix(in oklab, var(--brand) 26%, #100f12) 0%,
+      color-mix(in oklab, var(--brand) 12%, #0e0d10) 55%,
+      color-mix(in oklab, var(--brand) 6%, #0b0a0c) 100%
+    );
+  }
 }

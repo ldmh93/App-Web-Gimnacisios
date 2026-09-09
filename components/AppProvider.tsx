@@ -80,23 +80,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   /**
    * Repinta la interfaz con el color del gimnasio.
    *
-   * `--primary` está definido en globals.css con un rojo fijo; al escribirlo en
-   * el elemento raíz manda sobre esa hoja y toda la app (botones, resaltados
-   * del mapa muscular, gráficas) queda en armonía con la marca sin duplicar
-   * ningún estilo. También se ajusta `--primary-foreground` por contraste: con
-   * un acento claro, el texto blanco encima sería ilegible.
+   * Basta con escribir `--brand` en el elemento raíz: globals.css deriva de esa
+   * única variable el fondo, el cristal de las tarjetas, los botones, los
+   * bordes y las manchas de luz del fondo. Como es un estilo en línea, manda
+   * tanto sobre `:root` como sobre `.dark`, así que el color del logotipo se
+   * respeta en los dos temas.
+   *
+   * `--primary-foreground` sí se calcula aquí, porque depende del contraste:
+   * sobre un acento claro el texto blanco de los botones sería ilegible.
    */
   useEffect(() => {
     const root = document.documentElement;
     const color = brand.primaryColor;
     if (!color) {
-      root.style.removeProperty("--primary");
-      root.style.removeProperty("--ring");
+      root.style.removeProperty("--brand");
       root.style.removeProperty("--primary-foreground");
       return;
     }
-    root.style.setProperty("--primary", color);
-    root.style.setProperty("--ring", color);
+    root.style.setProperty("--brand", color);
     root.style.setProperty("--primary-foreground", readableForeground(color));
   }, [brand.primaryColor]);
 

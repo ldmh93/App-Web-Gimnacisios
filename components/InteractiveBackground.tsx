@@ -46,7 +46,7 @@ export function InteractiveBackground() {
       aria-hidden
       className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
     >
-      {/* Mancha roja principal (arriba) */}
+      {/* Mancha principal, con el color de la marca (arriba) */}
       <motion.div
         style={{ x: b1x, y: b1y }}
         className="absolute -top-[20%] left-1/2 -translate-x-1/2"
@@ -58,11 +58,11 @@ export function InteractiveBackground() {
               : { scale: [1, 1.15, 1], opacity: [0.55, 0.85, 0.55] }
           }
           transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-          className="size-[560px] rounded-full bg-primary/25 blur-[150px]"
+          className="bg-glow-brand size-[560px] rounded-full blur-[150px]"
         />
       </motion.div>
 
-      {/* Mancha naranja (derecha) */}
+      {/* Mancha clara de la misma familia (derecha) */}
       <motion.div
         style={{ x: b2x, y: b2y }}
         className="absolute -right-[10%] top-[30%]"
@@ -74,11 +74,11 @@ export function InteractiveBackground() {
               : { scale: [1.1, 0.9, 1.1], opacity: [0.35, 0.6, 0.35] }
           }
           transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
-          className="size-[440px] rounded-full bg-orange-500/20 blur-[140px]"
+          className="bg-glow-brand-light size-[440px] rounded-full blur-[140px]"
         />
       </motion.div>
 
-      {/* Mancha carmesí profunda (abajo-izquierda) */}
+      {/* Mancha profunda de la misma familia (abajo-izquierda) */}
       <motion.div
         style={{ x: b3x, y: b3y }}
         className="absolute -bottom-[15%] left-[-8%]"
@@ -90,7 +90,7 @@ export function InteractiveBackground() {
               : { scale: [1, 1.2, 1], opacity: [0.3, 0.55, 0.3] }
           }
           transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
-          className="size-[480px] rounded-full bg-red-700/20 blur-[150px]"
+          className="bg-glow-brand-deep size-[480px] rounded-full blur-[150px]"
         />
       </motion.div>
     </div>

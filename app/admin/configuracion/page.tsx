@@ -20,6 +20,7 @@ import {
   brandColor,
   compressImage,
   addBrandPreset,
+  BUILTIN_BRANDS,
   extractAccentColor,
   loadBrandPresets,
   removeBrandPreset,
@@ -87,6 +88,15 @@ export default function AdminConfiguracionPage() {
         return;
       }
       set(key, dataUrl);
+
+      // Primer logotipo y sin color elegido todavía: se toma del propio
+      // logotipo, que es lo que casi siempre se quiere. Si el gimnasio ya tiene
+      // un color fijado a mano no se toca, y siempre queda el botón de abajo
+      // para rehacerlo o quitarlo.
+      if (!draft.primaryColor) {
+        const found = await extractAccentColor(dataUrl);
+        if (found) set("primaryColor", found);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "No se pudo procesar la imagen.");
     }
@@ -480,9 +490,48 @@ export default function AdminConfiguracionPage() {
               </Button>
             </div>
 
+            {/* Marcas incluidas de fábrica: aplicar sin configurar nada */}
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Incluidas
+              </p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {BUILTIN_BRANDS.map((b) => (
+                  <button
+                    key={b.id}
+                    type="button"
+                    onClick={() => {
+                      setDraft(b.brand);
+                      setBrand(b.brand);
+                      setTouched(false);
+                      setSaved(true);
+                    }}
+                    className="flex items-center gap-3 rounded-xl border border-border/60 p-2 text-left transition-colors hover:border-primary/50 active:scale-[0.98]"
+                  >
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-muted">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={b.brand.mark}
+                        alt=""
+                        className="size-full object-contain p-0.5"
+                      />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-semibold">
+                        {b.label}
+                      </span>
+                      <span className="block text-xs text-muted-foreground">
+                        Aplicar
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {presets.length === 0 ? (
               <p className="text-xs italic text-muted-foreground/70">
-                Todavía no has guardado ninguna.
+                Todavía no has guardado ninguna marca propia.
               </p>
             ) : (
               <ul className="space-y-2">

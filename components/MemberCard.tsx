@@ -73,17 +73,12 @@ export function MemberCard({ profile }: { profile: UserProfile }) {
       initial={{ opacity: 0, y: 20, rotateX: -8 }}
       animate={{ opacity: 1, y: 0, rotateX: 0 }}
       transition={{ duration: 0.55, ease: "easeOut" }}
-      className="relative mx-auto w-full max-w-md overflow-hidden rounded-3xl border border-primary/30 p-6 text-white shadow-2xl"
-      style={{
-        background:
-          "radial-gradient(120% 120% at 15% 10%, #3a1114 0%, #1d0e10 55%, #120a0b 100%)",
-      }}
+      className="member-card-bg relative mx-auto w-full max-w-md overflow-hidden rounded-3xl border border-primary/30 p-6 text-white shadow-2xl"
     >
       {/* Brillos de fondo */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-16 -top-16 size-56 rounded-full opacity-40 blur-2xl"
-        style={{ background: "radial-gradient(circle, #e11d2e, transparent)" }}
+        className="member-card-glow pointer-events-none absolute -right-16 -top-16 size-56 rounded-full opacity-40 blur-2xl"
       />
 
       <div className="relative flex items-center justify-between">
