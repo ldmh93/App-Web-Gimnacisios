@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Check, ImageUp, RotateCcw, TriangleAlert } from "lucide-react";
 import { useApp } from "@/components/AppProvider";
@@ -24,16 +24,29 @@ import { cn } from "@/lib/utils";
  * gimnasios: se cambia el nombre y se suben sus logotipos, sin tocar código.
  */
 export default function AdminConfiguracionPage() {
-  const { brand, setBrand } = useApp();
+  const { brand, setBrand, ready } = useApp();
   const [draft, setDraft] = useState<BrandConfig>(brand);
+  const [touched, setTouched] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const markInput = useRef<HTMLInputElement>(null);
   const logoInput = useRef<HTMLInputElement>(null);
   const splashInput = useRef<HTMLInputElement>(null);
 
+  /**
+   * La marca se lee del almacenamiento DESPUÉS del primer render, así que al
+   * montar `brand` todavía es la de por defecto. Sin esta sincronización el
+   * formulario mostraría los valores por defecto y guardar pisaría la
+   * configuración ya guardada. Se respeta lo que el administrador esté
+   * editando: en cuanto toca algo, deja de sobrescribirse.
+   */
+  useEffect(() => {
+    if (ready && !touched) setDraft(brand);
+  }, [ready, brand, touched]);
+
   const set = <K extends keyof BrandConfig>(key: K, value: BrandConfig[K]) => {
     setDraft((d) => ({ ...d, [key]: value }));
+    setTouched(true);
     setSaved(false);
   };
 
@@ -67,12 +80,14 @@ export default function AdminConfiguracionPage() {
     }
     setError(null);
     setBrand(draft);
+    setTouched(false);
     setSaved(true);
   };
 
   const restore = () => {
     setDraft(DEFAULT_BRAND);
     setBrand(DEFAULT_BRAND);
+    setTouched(false);
     setSaved(true);
     setError(null);
   };
