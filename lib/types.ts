@@ -22,7 +22,14 @@ export type Goal =
   | "perder-grasa"
   | "ganar-musculo"
   | "mantenimiento"
-  | "recomposicion";
+  | "recomposicion"
+  | "rendimiento";
+
+/** Ritmo al que el socio quiere alcanzar su objetivo. */
+export type GoalPace = "suave" | "moderado" | "decidido";
+
+/** Tipo de entrenamiento predominante. */
+export type TrainingType = "fuerza" | "cardio" | "mixto" | "otro";
 
 export type Sex = "hombre" | "mujer";
 
@@ -135,6 +142,12 @@ export interface UserProfile {
   /** Fecha de alta en formato ISO (YYYY-MM-DD). */
   memberSince?: string;
   plan?: string;
+  /** Ritmo elegido para el objetivo; modula el déficit o superávit. */
+  pace?: GoalPace;
+  /** Tipo de entrenamiento predominante. */
+  trainingType?: TrainingType;
+  /** Duración aproximada de cada sesión, en minutos. */
+  sessionMinutes?: number;
 }
 
 export interface MacroTargets {
@@ -207,7 +220,11 @@ export interface Measurements {
   arm?: number;
   chest?: number;
   waist?: number;
+  /** Cadera, en cm. Junto con la cintura da el índice cintura-cadera. */
+  hip?: number;
   leg?: number;
+  /** Porcentaje de grasa corporal, si el socio dispone del dato. */
+  bodyFat?: number;
 }
 
 export interface ProgressEntry {
@@ -215,4 +232,6 @@ export interface ProgressEntry {
   date: string;
   weight: number;
   measurements: Measurements;
+  /** Foto de progreso opcional, comprimida como data URL. */
+  photo?: string;
 }

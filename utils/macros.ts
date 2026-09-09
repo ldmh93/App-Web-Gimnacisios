@@ -13,6 +13,7 @@ const PROTEIN_PER_KG: Record<Goal, number> = {
   "ganar-musculo": 2.0,
   mantenimiento: 1.8,
   recomposicion: 2.2,
+  rendimiento: 1.9,
 };
 
 /** Porcentaje de calorías destinado a grasas según objetivo. */
@@ -21,6 +22,7 @@ const FAT_RATIO: Record<Goal, number> = {
   "ganar-musculo": 0.25,
   mantenimiento: 0.3,
   recomposicion: 0.28,
+  rendimiento: 0.28,
 };
 
 /**
@@ -51,7 +53,11 @@ export function calculateNutrition(profile: UserProfile): NutritionResult {
     profile.sex
   );
   const maintenanceCalories = calculateMaintenance(bmr, profile.activity);
-  const calories = calculateTargetCalories(maintenanceCalories, profile.goal);
+  const calories = calculateTargetCalories(
+    maintenanceCalories,
+    profile.goal,
+    profile.pace ?? "moderado"
+  );
   const macros = calculateMacros(calories, profile.weight, profile.goal);
 
   return {

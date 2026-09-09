@@ -7,6 +7,7 @@
 export const STORAGE_KEYS = {
   profile: "fitcore:profile",
   nutrition: "fitcore:nutrition",
+  nutritionPlan: "fitcore:nutrition-plan",
   customRoutines: "fitcore:custom-routines",
   workoutSessions: "fitcore:workout-sessions",
   activeWorkout: "fitcore:active-workout",
@@ -35,6 +36,7 @@ export const STORAGE_KEYS = {
 export const USER_DATA_KEYS = [
   STORAGE_KEYS.profile,
   STORAGE_KEYS.nutrition,
+  STORAGE_KEYS.nutritionPlan,
   STORAGE_KEYS.customRoutines,
   STORAGE_KEYS.workoutSessions,
   STORAGE_KEYS.activeWorkout,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   LineChart,
@@ -8,6 +8,7 @@ import {
   MoveRight,
   MoveUp,
   PlusCircle,
+  Camera,
   Ruler,
   Scale,
   Trash2,
@@ -15,6 +16,8 @@ import {
 import { PageHeader } from "@/components/PageHeader";
 import { ProgressChart } from "@/components/ProgressChart";
 import { TrainingSummary } from "@/components/TrainingSummary";
+import { ObjectiveWizard } from "@/components/ObjectiveWizard";
+import { ObjectiveSummary } from "@/components/ObjectiveSummary";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -34,8 +37,16 @@ import {
 } from "@/components/ui/select";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { generateId, STORAGE_KEYS } from "@/lib/storage";
+import { compressImage, dataUrlSizeKb } from "@/lib/brand";
 import { computeStats, personalRecords } from "@/lib/stats";
-import type { Measurements, ProgressEntry, WorkoutSession } from "@/lib/types";
+import type { NutritionPlan } from "@/lib/nutritionPlan";
+import { calculateNutrition } from "@/utils/macros";
+import type {
+  Measurements,
+  ProgressEntry,
+  UserProfile,
+  WorkoutSession,
+} from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 type Metric = "weight" | keyof Measurements;
@@ -45,7 +56,9 @@ const METRICS: { id: Metric; label: string; unit: string }[] = [
   { id: "arm", label: "Brazo", unit: "cm" },
   { id: "chest", label: "Pecho", unit: "cm" },
   { id: "waist", label: "Cintura", unit: "cm" },
+  { id: "hip", label: "Cadera", unit: "cm" },
   { id: "leg", label: "Pierna", unit: "cm" },
+  { id: "bodyFat", label: "Grasa corporal", unit: "%" },
 ];
 
 function metricValue(entry: ProgressEntry, metric: Metric): number | undefined {
@@ -65,7 +78,9 @@ const EMPTY_FORM = {
   arm: "",
   chest: "",
   waist: "",
+  hip: "",
   leg: "",
+  bodyFat: "",
 };
 
 export default function ProgresoPage() {
@@ -77,7 +92,39 @@ export default function ProgresoPage() {
     STORAGE_KEYS.workoutSessions,
     []
   );
+  const [profile, setProfile] = useLocalStorage<UserProfile | null>(
+    STORAGE_KEYS.profile,
+    null
+  );
+  const [plan, setPlan] = useLocalStorage<NutritionPlan | null>(
+    STORAGE_KEYS.nutritionPlan,
+    null
+  );
+  const [wizardOpen, setWizardOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
+  const [photo, setPhoto] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const photoInput = useRef<HTMLInputElement>(null);
+  const registerRef = useRef<HTMLDivElement>(null);
+
+  /** Las fotos se comprimen: el navegador solo guarda unos 5 MB en total. */
+  const pickPhoto = async (file: File | undefined) => {
+    if (!file) return;
+    setPhotoError(null);
+    try {
+      const dataUrl = await compressImage(file, 900, 0.7);
+      const kb = dataUrlSizeKb(dataUrl);
+      if (kb > 600) {
+        setPhotoError(
+          `La foto ocupa ${kb} KB comprimida. Usa una más ligera para no llenar el almacenamiento.`
+        );
+        return;
+      }
+      setPhoto(dataUrl);
+    } catch {
+      setPhotoError("No se pudo procesar la foto.");
+    }
+  };
 
   const trainingStats = useMemo(() => computeStats(sessions), [sessions]);
   const records = useMemo(() => personalRecords(sessions), [sessions]);
@@ -112,7 +159,9 @@ export default function ProgresoPage() {
     if (form.arm) measurements.arm = Number(form.arm);
     if (form.chest) measurements.chest = Number(form.chest);
     if (form.waist) measurements.waist = Number(form.waist);
+    if (form.hip) measurements.hip = Number(form.hip);
     if (form.leg) measurements.leg = Number(form.leg);
+    if (form.bodyFat) measurements.bodyFat = Number(form.bodyFat);
 
     setEntries((prev) => [
       ...prev,
@@ -121,9 +170,11 @@ export default function ProgresoPage() {
         date: form.date,
         weight: Number(form.weight),
         measurements,
+        ...(photo ? { photo } : {}),
       },
     ]);
     setForm({ ...EMPTY_FORM, date: form.date });
+    setPhoto(null);
   };
 
   const deleteEntry = (id: string) => {
@@ -133,17 +184,85 @@ export default function ProgresoPage() {
   const first = sorted[0];
   const last = sorted[sorted.length - 1];
 
+  /** Peso vigente: el último registrado, o el del perfil si aún no hay ninguno. */
+  const latestWeight = last?.weight ?? profile?.weight ?? 0;
+
+  /**
+   * Guarda el perfil y calcula el plan, conservando el anterior para poder
+   * enseñar la comparación "antes / ahora".
+   */
+  const saveObjective = (next: UserProfile) => {
+    // El peso más reciente manda sobre el que se escribió en el asistente.
+    const withWeight: UserProfile =
+      last && last.weight > 0 ? { ...next, weight: last.weight } : next;
+    setProfile(withWeight);
+    setPlan((prev) => ({
+      current: calculateNutrition(withWeight),
+      previous: prev ? { ...prev.current } : undefined,
+      calculatedAt: new Date().toISOString(),
+      weightAtCalculation: withWeight.weight,
+    }));
+    setWizardOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  /** Baja al formulario de registro. */
+  const goToRegister = () => {
+    registerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
       <PageHeader
         eyebrow="Seguimiento"
         title="Progreso"
-        description="Registra tu peso y medidas corporales, visualiza tu evolución y compara tu punto de partida con tu presente."
+        description="Define tu objetivo, calcula tus macros y sigue tu evolución con datos, medidas y fotos."
       />
+
+      {/* ------------------------ Objetivo y macros ------------------------- */}
+      {wizardOpen || !profile || !plan ? (
+        <div className="mb-8">
+          {!wizardOpen && !plan && (
+            <Card className="mb-4 border-primary/30 bg-primary/5">
+              <CardContent className="flex flex-wrap items-center justify-between gap-3 pt-6">
+                <div>
+                  <p className="font-semibold">
+                    Empieza definiendo tu objetivo
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Seis pasos rápidos para calcular tus calorías y macros.
+                  </p>
+                </div>
+                <Button
+                  onClick={() => setWizardOpen(true)}
+                  className="font-semibold"
+                >
+                  Empezar
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+          {wizardOpen && (
+            <ObjectiveWizard
+              profile={profile}
+              onFinish={saveObjective}
+              onCancel={plan ? () => setWizardOpen(false) : undefined}
+            />
+          )}
+        </div>
+      ) : (
+        <ObjectiveSummary
+          profile={profile}
+          plan={plan}
+          latestWeight={latestWeight}
+          onRegister={goToRegister}
+          onUpdate={() => setWizardOpen(true)}
+        />
+      )}
 
       <TrainingSummary stats={trainingStats} records={records} />
 
-      <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
+      <div ref={registerRef} className="grid scroll-mt-24 gap-6 lg:grid-cols-[380px_1fr]">
         {/* ------------------------------ Registro ----------------------------- */}
         <Card className="h-fit">
           <CardHeader>
@@ -193,6 +312,7 @@ export default function ProgresoPage() {
                     ["arm", "Brazo"],
                     ["chest", "Pecho"],
                     ["waist", "Cintura"],
+                    ["hip", "Cadera"],
                     ["leg", "Pierna"],
                   ] as const
                 ).map(([field, label]) => (
@@ -209,6 +329,62 @@ export default function ProgresoPage() {
                   />
                 ))}
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="p-grasa">
+                Porcentaje de grasa corporal · opcional
+              </Label>
+              <Input
+                id="p-grasa"
+                type="number"
+                inputMode="decimal"
+                step="0.1"
+                min={0}
+                max={70}
+                placeholder="Solo si dispones del dato"
+                value={form.bodyFat}
+                onChange={(e) => set("bodyFat")(e.target.value)}
+              />
+            </div>
+
+            {/* Foto de progreso: el espejo cuenta lo que la báscula calla */}
+            <div className="space-y-2">
+              <Label>Foto de progreso · opcional</Label>
+              <input
+                ref={photoInput}
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={(e) => pickPhoto(e.target.files?.[0])}
+              />
+              {photo ? (
+                <div className="flex items-center gap-3 rounded-2xl border border-border/60 p-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photo}
+                    alt="Foto de progreso seleccionada"
+                    className="size-20 rounded-xl object-cover"
+                  />
+                  <Button variant="ghost" size="sm" onClick={() => setPhoto(null)}>
+                    Quitar
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => photoInput.current?.click()}
+                >
+                  <Camera className="size-4" />
+                  Añadir foto
+                </Button>
+              )}
+              {photoError && (
+                <p role="alert" className="text-xs text-destructive">
+                  {photoError}
+                </p>
+              )}
             </div>
 
             <Button onClick={addEntry} disabled={!canSave} className="w-full">
