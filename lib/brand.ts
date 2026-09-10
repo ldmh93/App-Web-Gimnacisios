@@ -58,7 +58,7 @@ export const DEFAULT_BRAND: BrandConfig = {
   nameAccent: "FITNESS",
   mark: "/brand/mara-mark.png",
   logo: "/brand/mara-logo.png",
-  splash: "/brand/mara-logo.png",
+  splash: "/brand/mara-splash.png",
   tagline: "Entrena con constancia. Los resultados llegan.",
   primaryColor: "#f5c518",
   nameColor: "",
