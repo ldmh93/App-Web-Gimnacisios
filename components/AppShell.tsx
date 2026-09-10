@@ -9,8 +9,15 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
 
-/** Rutas visibles sin iniciar sesión. */
-const PUBLIC_ROUTES = ["/", "/login"];
+/**
+ * Rutas visibles sin iniciar sesión.
+ *
+ * Solo el acceso. La raíz NO es pública a propósito: al abrir la aplicación se
+ * entra por la presentación y de ahí al login o al inicio, como una app y no
+ * como una web con portada. La portada de marketing (app/page.tsx) sigue en el
+ * proyecto; para recuperarla basta con volver a añadir "/" aquí.
+ */
+const PUBLIC_ROUTES = ["/login"];
 
 /**
  * Duración de la presentación de marca.
@@ -81,7 +88,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       router.replace("/login");
       return;
     }
-    if (account && pathname === "/login") {
+    // Con sesión iniciada, ni el acceso ni la raíz tienen nada que ofrecer:
+    // se entra directo a donde corresponde según el rol.
+    if (account && (pathname === "/login" || pathname === "/")) {
       router.replace(isAdmin ? "/admin" : "/dashboard");
       return;
     }
@@ -98,6 +107,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const blocked =
     ready &&
     ((!account && !isPublic(pathname)) ||
+      (account && pathname === "/") ||
       (pathname.startsWith("/admin") && account && !isAdmin));
 
   return (
