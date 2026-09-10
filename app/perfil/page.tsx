@@ -12,17 +12,15 @@ import {
   UtensilsCrossed,
   Pill,
   Settings2,
-  Trash2,
   UserPlus,
 } from "lucide-react";
 import { Achievements } from "@/components/Achievements";
 import { NotificationsCard } from "@/components/NotificationsCard";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { STORAGE_KEYS, resetLocalDataWithConfirm } from "@/lib/storage";
+import { STORAGE_KEYS } from "@/lib/storage";
 import { achievements, computeStats, personalRecords } from "@/lib/stats";
 import type { UserProfile, WorkoutSession } from "@/lib/types";
 
@@ -177,28 +175,24 @@ export default function PerfilPage() {
 
       <Achievements items={logros} />
 
-      <section aria-label="Ajustes" className="mt-6">
-        <h2 className="mb-2 flex items-center gap-2 px-1 text-sm font-semibold text-muted-foreground">
-          <Settings2 className="size-4" />
-          Ajustes
-        </h2>
+      {/* Los ajustes viven en su propia pestaña; aquí solo el acceso. */}
+      <section aria-label="Ajustes" className="mt-6 pb-4">
         <Card className="overflow-hidden">
-          <ul className="divide-y divide-border">
-            <li className="flex items-center justify-between gap-4 px-4 py-3">
-              <span className="font-medium">Tema</span>
-              <ThemeToggle />
-            </li>
-            <li>
-              <button
-                type="button"
-                onClick={resetLocalDataWithConfirm}
-                className="flex w-full items-center gap-3 px-4 py-3.5 text-left text-destructive transition-colors hover:bg-destructive/10 active:bg-destructive/15"
-              >
-                <Trash2 className="size-5 shrink-0" />
-                <span className="font-medium">Borrar mis datos locales</span>
-              </button>
-            </li>
-          </ul>
+          <Link
+            href="/ajustes"
+            className="flex items-center justify-between gap-4 px-4 py-4 transition-colors hover:bg-muted/60 active:bg-muted"
+          >
+            <span className="flex items-center gap-3">
+              <Settings2 className="size-5 text-primary" />
+              <span>
+                <span className="block font-medium">Ajustes</span>
+                <span className="block text-xs text-muted-foreground">
+                  Tema, descanso, avisos y datos
+                </span>
+              </span>
+            </span>
+            <ChevronRight className="size-4 text-muted-foreground" />
+          </Link>
         </Card>
       </section>
     </div>

@@ -38,7 +38,11 @@ export function SplashScreen() {
         initial={{ scale: 0.82, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 220, damping: 18 }}
-        className="relative h-32 w-auto max-w-[70vw] object-contain drop-shadow-[0_10px_40px_rgba(225,29,46,0.5)]"
+        className="relative h-32 w-auto max-w-[70vw] object-contain"
+        style={{
+          filter:
+            "drop-shadow(0 10px 40px color-mix(in oklab, var(--primary) 50%, transparent))",
+        }}
       />
 
       <motion.p

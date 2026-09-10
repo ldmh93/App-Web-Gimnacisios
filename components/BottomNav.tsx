@@ -3,7 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Dumbbell, Home, LineChart, PlayCircle, UserRound } from "lucide-react";
+import {
+  Dumbbell,
+  Home,
+  LineChart,
+  PlayCircle,
+  Settings,
+  UserRound,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /** Accesos principales de la barra inferior (solo móvil/tablet). */
@@ -13,6 +20,7 @@ const ITEMS = [
   { href: "/ejercicios", label: "Ejercicios", icon: Dumbbell },
   { href: "/progreso", label: "Progreso", icon: LineChart },
   { href: "/perfil", label: "Perfil", icon: UserRound },
+  { href: "/ajustes", label: "Ajustes", icon: Settings },
 ];
 
 export function BottomNav() {
@@ -27,7 +35,7 @@ export function BottomNav() {
         initial={{ y: 90, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 260, damping: 26, delay: 0.1 }}
-        className="flex w-full max-w-md items-center justify-around gap-1 rounded-full border border-white/15 bg-background/55 p-1.5 shadow-lg shadow-black/10 ring-1 ring-black/5 backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/45 dark:border-white/10"
+        className="flex w-full max-w-md items-center justify-around gap-0.5 rounded-full border border-white/15 bg-background/55 p-1.5 shadow-lg shadow-black/10 ring-1 ring-black/5 backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/45 dark:border-white/10"
       >
         {ITEMS.map((item) => {
           const active = pathname.startsWith(item.href);
@@ -38,7 +46,7 @@ export function BottomNav() {
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "relative flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-[11px] font-medium transition-colors duration-200 active:scale-[0.92]",
+                "relative flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 rounded-full px-0.5 py-2 text-[10px] font-medium leading-none transition-colors duration-200 active:scale-[0.92]",
                 active
                   ? "text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground"
@@ -55,7 +63,7 @@ export function BottomNav() {
                 animate={{ scale: active ? 1.1 : 1 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
               >
-                <Icon className="size-[22px]" />
+                <Icon className="size-5" />
               </motion.span>
               <span className="leading-none">{item.label}</span>
             </Link>

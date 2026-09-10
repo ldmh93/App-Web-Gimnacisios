@@ -10,7 +10,8 @@ import {
 } from "react";
 import {
   currentSession,
-  ensureSeedAdmin,
+  DEMO_MEMBER,
+  ensureSeedAccounts,
   getAccount,
   logout as clearSession,
   type Account,
@@ -21,6 +22,7 @@ import {
   readableForeground,
   type BrandConfig,
 } from "@/lib/brand";
+import { seedDemoData } from "@/lib/demoData";
 import { loadFromStorage, saveToStorage, STORAGE_KEYS } from "@/lib/storage";
 
 interface AppContextValue {
@@ -54,14 +56,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const readSession = useCallback(() => {
     const session = currentSession();
-    setAccount(session ? (getAccount(session.accountId) ?? null) : null);
+    const found = session ? (getAccount(session.accountId) ?? null) : null;
+    // Solo la cuenta de demostración recibe los datos de ejemplo. Un socio que
+    // se registra de verdad empieza en blanco, no con el historial de otra
+    // persona.
+    if (found?.email === DEMO_MEMBER.email) seedDemoData();
+    setAccount(found);
   }, []);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       // El administrador se siembra en el primer arranque; es idempotente.
-      await ensureSeedAdmin();
+      await ensureSeedAccounts();
       if (cancelled) return;
       setBrandState(loadFromStorage<BrandConfig>(STORAGE_KEYS.brand, DEFAULT_BRAND));
       readSession();

@@ -140,7 +140,11 @@ export default function LandingPage() {
                 whileHover={{ scale: 1.07, rotate: 3 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 300, damping: 18 }}
-                className="cursor-pointer drop-shadow-[0_10px_30px_rgba(225,29,46,0.45)]"
+                className="cursor-pointer"
+                style={{
+                  filter:
+                    "drop-shadow(0 10px 30px color-mix(in oklab, var(--primary) 45%, transparent))",
+                }}
               >
                 <LogoFull className="h-44 sm:h-56" />
               </motion.div>

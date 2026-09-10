@@ -8,6 +8,7 @@ import { SplashScreen } from "@/components/SplashScreen";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
+import { presentationSeen } from "@/lib/onboarding";
 
 /**
  * Rutas visibles sin iniciar sesión.
@@ -17,7 +18,7 @@ import { BottomNav } from "@/components/BottomNav";
  * como una web con portada. La portada de marketing (app/page.tsx) sigue en el
  * proyecto; para recuperarla basta con volver a añadir "/" aquí.
  */
-const PUBLIC_ROUTES = ["/login"];
+const PUBLIC_ROUTES = ["/login", "/presentacion"];
 
 /**
  * Duración de la presentación de marca.
@@ -85,7 +86,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!ready) return;
     if (!account && !isPublic(pathname)) {
-      router.replace("/login");
+      // Quien todavía no conoce la app pasa por la presentación antes del
+      // acceso; quien ya la vio va directo al acceso.
+      router.replace(presentationSeen() ? "/login" : "/presentacion");
+      return;
+    }
+    if (account && pathname === "/presentacion") {
+      router.replace(isAdmin ? "/admin" : "/dashboard");
       return;
     }
     // Con sesión iniciada, ni el acceso ni la raíz tienen nada que ofrecer:
@@ -100,7 +107,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [ready, account, isAdmin, pathname, router]);
 
   const isAdminArea = pathname.startsWith("/admin");
-  const isLogin = pathname === "/login";
+  const isLogin = pathname === "/login" || pathname === "/presentacion";
   const showChrome = !isAdminArea && !isLogin;
 
   // Mientras la guarda decide, se evita mostrar contenido protegido.

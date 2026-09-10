@@ -43,10 +43,16 @@ export interface AuthSession {
   startedAt: string;
 }
 
-/** Credenciales del administrador que se siembra en el primer arranque. */
+/** Credenciales sembradas en el primer arranque, para poder demostrar la app. */
 export const DEMO_ADMIN = {
-  email: "admin@fitcore.app",
+  email: "admin@marafitness.app",
   password: "admin1234",
+} as const;
+
+export const DEMO_MEMBER = {
+  email: "demo@marafitness.app",
+  password: "demo1234",
+  name: "Andrea Salazar",
 } as const;
 
 export function normalizeEmail(email: string): string {
@@ -84,21 +90,47 @@ export function getAccount(id: string): Account | undefined {
 }
 
 /**
- * Crea el administrador la primera vez que se abre la aplicación.
- * Es idempotente: si ya existe alguna cuenta admin, no hace nada.
+ * Crea las cuentas de demostración la primera vez que se abre la aplicación:
+ * un administrador y un socio. Es idempotente, así que no pisa nada si ya
+ * existen.
  */
-export async function ensureSeedAdmin(): Promise<void> {
+export async function ensureSeedAccounts(): Promise<void> {
   const accounts = listAccounts();
-  if (accounts.some((a) => a.role === "admin")) return;
-  const admin: Account = {
-    id: generateId("cuenta"),
-    name: "Administrador",
-    email: DEMO_ADMIN.email,
-    passwordHash: await hashPassword(DEMO_ADMIN.password),
-    role: "admin",
-    createdAt: new Date().toISOString(),
-  };
-  saveAccounts([...accounts, admin]);
+  const next = [...accounts];
+
+  if (!next.some((a) => a.role === "admin")) {
+    next.push({
+      id: generateId("cuenta"),
+      name: "Administrador",
+      email: DEMO_ADMIN.email,
+      passwordHash: await hashPassword(DEMO_ADMIN.password),
+      role: "admin",
+      createdAt: new Date().toISOString(),
+    });
+  }
+
+  if (!next.some((a) => a.email === DEMO_MEMBER.email)) {
+    const since = new Date();
+    since.setDate(since.getDate() - 214);
+    const until = new Date();
+    until.setDate(until.getDate() + 16);
+    next.push({
+      id: generateId("cuenta"),
+      name: DEMO_MEMBER.name,
+      email: DEMO_MEMBER.email,
+      passwordHash: await hashPassword(DEMO_MEMBER.password),
+      role: "usuario",
+      createdAt: since.toISOString(),
+      membership: {
+        plan: "mensual",
+        since: since.toISOString().slice(0, 10),
+        until: until.toISOString().slice(0, 10),
+        active: true,
+      },
+    });
+  }
+
+  if (next.length !== accounts.length) saveAccounts(next);
 }
 
 export type AuthResult =

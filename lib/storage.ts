@@ -26,6 +26,9 @@ export const STORAGE_KEYS = {
   nutritionist: "fitcore:nutritionist",
   notifications: "fitcore:notifications",
   readNotifications: "fitcore:read-notifications",
+  /** Marca de que ya se sembraron los datos de demostración. */
+  demoSeeded: "fitcore:demo-seeded",
+  notifyEnabled: "fitcore:notify-enabled",
 } as const;
 
 /**
@@ -45,6 +48,8 @@ export const USER_DATA_KEYS = [
   STORAGE_KEYS.favorites,
   STORAGE_KEYS.achievements,
   STORAGE_KEYS.readNotifications,
+  STORAGE_KEYS.demoSeeded,
+  STORAGE_KEYS.notifyEnabled,
 ] as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

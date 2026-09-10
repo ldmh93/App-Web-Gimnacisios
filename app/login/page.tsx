@@ -3,12 +3,26 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Eye, EyeOff, Loader2, LogIn, ShieldCheck, UserPlus } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  LogIn,
+  ShieldCheck,
+  UserPlus,
+  UserRound,
+} from "lucide-react";
 import { useApp } from "@/components/AppProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { DEMO_ADMIN, login, register, startSession } from "@/lib/auth";
+import {
+  DEMO_ADMIN,
+  DEMO_MEMBER,
+  login,
+  register,
+  startSession,
+} from "@/lib/auth";
 import { brandColor, brandName, splashImage } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
@@ -63,12 +77,27 @@ export default function LoginPage() {
     }
   };
 
-  /** Rellena las credenciales del administrador de demostración. */
-  const fillAdmin = () => {
+  /**
+   * Rellena unas credenciales de demostración y entra sin más pasos: en una
+   * demostración, obligar a pulsar otro botón después solo estorba.
+   */
+  const fill = async (correo: string, clave: string) => {
     setMode("entrar");
-    setEmail(DEMO_ADMIN.email);
-    setPassword(DEMO_ADMIN.password);
+    setEmail(correo);
+    setPassword(clave);
     setError(null);
+    setBusy(true);
+    try {
+      const result = await login(correo, clave);
+      if (!result.ok) {
+        setError(result.error);
+        return;
+      }
+      refresh();
+      router.replace(result.account.role === "admin" ? "/admin" : "/dashboard");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -264,24 +293,35 @@ export default function LoginPage() {
           </button>
         )}
 
-        {/* Acceso de demostración: este panel es local, sin servidor */}
+        {/* Accesos de demostración, con los datos ya cargados */}
         <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
           <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-white/50">
             <ShieldCheck className="size-3.5" />
-            Acceso de administrador
+            Entrar como demostración
           </p>
-          <p className="mt-1.5 text-xs leading-relaxed text-white/40">
-            {DEMO_ADMIN.email} · {DEMO_ADMIN.password}
+          <div className="mt-3 space-y-2">
+            <Button
+              type="button"
+              onClick={() => fill(DEMO_MEMBER.email, DEMO_MEMBER.password)}
+              className="h-12 w-full justify-start font-semibold"
+            >
+              <UserRound className="size-4" />
+              Socio · {DEMO_MEMBER.name}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => fill(DEMO_ADMIN.email, DEMO_ADMIN.password)}
+              className="h-12 w-full justify-start border-white/15 bg-transparent text-white hover:bg-white/10 hover:text-white"
+            >
+              <ShieldCheck className="size-4" />
+              Administrador del gimnasio
+            </Button>
+          </div>
+          <p className="mt-3 text-[11px] leading-relaxed text-white/35">
+            El socio de demostración trae rutinas, historial de entrenamientos,
+            mediciones y progreso ya cargados. Los datos son ficticios.
           </p>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={fillAdmin}
-            className="mt-3 w-full border-white/15 bg-transparent text-white hover:bg-white/10 hover:text-white"
-          >
-            Entrar como administrador
-          </Button>
         </div>
 
         <p className="mt-6 text-center text-[11px] leading-relaxed text-white/30">
