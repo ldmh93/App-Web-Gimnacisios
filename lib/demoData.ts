@@ -1,6 +1,6 @@
 import { generateId, saveToStorage, STORAGE_KEYS } from "@/lib/storage";
 import { getExercise } from "@/data/exercises";
-import { buildSession, todayKey } from "@/lib/workout";
+import { todayKey } from "@/lib/workout";
 import { calculateNutrition } from "@/utils/macros";
 import type { NutritionPlan } from "@/lib/nutritionPlan";
 import { createNotification, type AppNotification } from "@/lib/notifications";
@@ -297,7 +297,3 @@ export function resetDemoData(): void {
   seedDemoData();
 }
 
-/** Sesión de ejemplo lista para continuar, usada al reiniciar la demo. */
-export function demoActiveSession(): WorkoutSession {
-  return buildSession("Empuje · Pecho y hombro", TODAY_PLAN.exercises);
-}

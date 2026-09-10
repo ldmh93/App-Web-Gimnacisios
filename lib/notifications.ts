@@ -89,7 +89,3 @@ export function markAllRead(ids: string[]): void {
   saveToStorage(STORAGE_KEYS.readNotifications, ids);
 }
 
-export function unreadCount(): number {
-  const read = new Set(loadReadIds());
-  return publishedNotifications().filter((n) => !read.has(n.id)).length;
-}

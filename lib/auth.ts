@@ -1,3 +1,4 @@
+import { DEMO_MEMBERS, DEMO_MEMBER_PASSWORD } from "@/data/demoMembers";
 import { generateId, loadFromStorage, saveToStorage, STORAGE_KEYS } from "@/lib/storage";
 
 /**
@@ -109,24 +110,31 @@ export async function ensureSeedAccounts(): Promise<void> {
     });
   }
 
-  if (!next.some((a) => a.email === DEMO_MEMBER.email)) {
+  // Socios de ejemplo: sin ellos el panel de administración se enseña vacío.
+  const hash = await hashPassword(DEMO_MEMBER_PASSWORD);
+  for (const seed of DEMO_MEMBERS) {
+    if (next.some((a) => a.email === seed.email)) continue;
+
     const since = new Date();
-    since.setDate(since.getDate() - 214);
+    since.setDate(since.getDate() - seed.joinedDaysAgo);
     const until = new Date();
-    until.setDate(until.getDate() + 16);
+    until.setDate(until.getDate() + seed.expiresInDays);
+
     next.push({
       id: generateId("cuenta"),
-      name: DEMO_MEMBER.name,
-      email: DEMO_MEMBER.email,
-      passwordHash: await hashPassword(DEMO_MEMBER.password),
+      name: seed.name,
+      email: seed.email,
+      passwordHash: hash,
       role: "usuario",
       createdAt: since.toISOString(),
-      membership: {
-        plan: "mensual",
-        since: since.toISOString().slice(0, 10),
-        until: until.toISOString().slice(0, 10),
-        active: true,
-      },
+      membership: seed.plan
+        ? {
+            plan: seed.plan,
+            since: since.toISOString().slice(0, 10),
+            until: until.toISOString().slice(0, 10),
+            active: true,
+          }
+        : undefined,
     });
   }
 

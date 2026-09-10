@@ -14,7 +14,6 @@ export const STORAGE_KEYS = {
   progress: "fitcore:progress",
   todayRoutine: "fitcore:today-routine",
   favorites: "fitcore:favorites",
-  achievements: "fitcore:achievements",
   restSeconds: "fitcore:rest-seconds",
   /* --- Configuración e identidad (administrables desde /admin) --- */
   brand: "fitcore:brand",
@@ -46,7 +45,6 @@ export const USER_DATA_KEYS = [
   STORAGE_KEYS.progress,
   STORAGE_KEYS.todayRoutine,
   STORAGE_KEYS.favorites,
-  STORAGE_KEYS.achievements,
   STORAGE_KEYS.readNotifications,
   STORAGE_KEYS.demoSeeded,
   STORAGE_KEYS.notifyEnabled,
