@@ -136,7 +136,7 @@ export function ExerciseCard({
   onToggleFavorite,
 }: ExerciseCardProps) {
   return (
-    <div className="relative">
+    <div className="relative h-full">
     <Dialog>
       <DialogTrigger asChild>
         <motion.button
@@ -144,7 +144,7 @@ export function ExerciseCard({
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: Math.min(index * 0.05, 0.4) }}
-          className="group text-left"
+          className="group h-full w-full text-left"
         >
           <Card className="h-full gap-0 overflow-hidden py-0 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-lg">
             {/* Imagen (si existe en public/exercises/) sobre el placeholder */}
@@ -170,19 +170,19 @@ export function ExerciseCard({
                 </motion.span>
               )}
             </div>
-            <CardContent className="space-y-3 p-4">
+            <CardContent className="flex flex-1 flex-col space-y-3 p-4">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-primary">
                   {muscleLabel(exercise.group)}
                 </p>
-                <h3 className="mt-1 font-semibold leading-snug">
+                <h3 className="mt-1 line-clamp-2 font-semibold leading-snug">
                   {exercise.name}
                 </h3>
               </div>
               <p className="line-clamp-1 text-xs text-muted-foreground">
                 {exercise.muscles.join(" · ")}
               </p>
-              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <div className="mt-auto flex items-center gap-4 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Repeat2 className="size-3.5 text-primary" />
                   {exercise.sets} × {exercise.reps}

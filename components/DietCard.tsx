@@ -43,7 +43,7 @@ export function DietCard({ diet, index = 0 }: DietCardProps) {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: Math.min(index * 0.05, 0.4) }}
-          className="text-left"
+          className="h-full w-full text-left"
         >
           <Card className="h-full transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-lg">
             <CardContent className="space-y-4">

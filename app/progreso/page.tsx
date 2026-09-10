@@ -441,7 +441,7 @@ export default function ProgresoPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                     {METRICS.map((m) => {
                       const start = metricValue(first, m.id);
                       const end = metricValue(last, m.id);
